@@ -10,7 +10,7 @@ A NodeJS web application that supports interfacing with the [Todo.txt](http://to
 
 You'll need to register a Dropbox application which can be done [here](https://www.dropbox.com/developers/apps). You app needs to be a "Dropbox API app" with access to all files (not only the ones it creates) but only of the "Text" type.
 
-Once you register the app, place the key and secret in a file named `dropbox.json` (you can use the existing file [dropbox.json.example](/blob/master/dropbox.json.example) to guide you) in this directory. Todo.txt++ will pick up these settings the next time it starts and interacting with Dropbox as the application you registered.
+Once you register the app, place the key and secret in a file named `dropbox.json` (you can use the existing file [dropbox.json.example](/dropbox.json.example) to guide you) in this directory. Todo.txt++ will pick up these settings the next time it starts and interacting with Dropbox as the application you registered.
 
 ### Session Key
 
