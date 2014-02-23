@@ -25,15 +25,17 @@ script.
     editor = ace.edit("ace-editor");
 
     editor.getSession().setMode("ace/mode/todotxt");
+    editor.setShowPrintMargin(false);
+    editor.getSession().setUseWrapMode('free');
+
 
     $.ajax('/list')
     .done(function(data){
-      editor.setValue(data);
+      editor.setValue(data, -1);
       editor.getSession().on('change', function(e) {
-        console.log(e);
         modified=true;
       });
-      
+
     });
   });
 

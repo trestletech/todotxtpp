@@ -32,6 +32,7 @@ button i {
 #save-btn{
   font-size: 18px;
   width: 100px;
+  margin-top: .5em;
 }
 
 .feature, .feature-text, #btn-save {
@@ -45,4 +46,5 @@ button i {
 
 #ace-editor {
   height: 300px;
+  border: 1px solid #CCC;
 }
