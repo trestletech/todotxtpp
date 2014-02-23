@@ -6,23 +6,67 @@
 .container-fluid
   .row-fluid
     .col-sm-2.col-sm-offset-10
-      a(href="#" onclick="$.ajax('/list', {type: 'POST', data : {text: ace.edit('ace-editor').getSession().getValue() }});")
-        button.btn-md.btn-info
-          i.fa.fa-floppy-o.fa-2x
-          #save-btn Save
-
+      button.btn-md.btn-info#save-btn(onclick="saveFile()")
+        i.fa.fa-floppy-o.fa-2x
+        | Save
 
 script.
+  var modified = false;
+
+  window.onbeforeunload = function(){
+    if (modified){
+      return 'You have changes that have not yet been saved to Dropbox. If you leave, any unsaved changes will be lost.';
+    }
+    return;
+  }
+
+  var editor;
   $(document).ready(function(){
-    var editor = ace.edit("ace-editor");
+    editor = ace.edit("ace-editor");
 
     editor.getSession().setMode("ace/mode/todotxt");
 
     $.ajax('/list')
     .done(function(data){
       editor.setValue(data);
+      editor.getSession().on('change', function(e) {
+        console.log(e);
+        modified=true;
+      });
+      
     });
-
   });
+
+  saveFile = function(){
+    $('#save-btn').prop('disabled', true);
+    $.ajax('/list', {
+      type: 'POST', 
+      data : {
+        text: editor.getSession().getValue() 
+      }
+    })
+    .fail(function(xhr, status, err){
+      console.log(err);
+      $(document).trigger("add-alerts", [
+        {
+          'message': "Error saving file: " + status,
+          'priority': 'error'
+        }
+      ]);
+    })
+    .done(function(){
+      modified = false;
+      $(document).trigger("add-alerts", [
+        {
+          'message': "Saved successfully.",
+          'priority': 'info'
+        }
+      ]);
+    })
+    .always(function(){
+      $('#save-btn').prop('disabled', false);
+    })
+  }
+
 
   

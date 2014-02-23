@@ -8,6 +8,9 @@ head
   link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
   script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
   
+  // Bootstrap Alerts
+  script(src="/js/jquery.bsAlerts.min.js")
+
   // Lumen Bootstrap Theme
   link(rel='stylesheet', href='/css/lumen.css')
 
@@ -60,3 +63,4 @@ body
             li.logged-out
               a(href="/login") Login
             
+  div(data-alerts="alerts", data-titles="{'warning': '<em>Warning!</em>'}", data-ids="myid", data-fade="3000")
