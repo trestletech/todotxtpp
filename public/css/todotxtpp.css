@@ -1,0 +1,27 @@
+#footer {
+  margin-top: 2em;
+  padding-top: .5em;
+  border-top: 1px solid #CCC;
+  text-align: center;
+}
+
+#sign-up {
+  margin-top: 1.5em;
+}
+
+.feature-icon {
+  color: #75caeb;
+  float: left;
+  padding-top: 12px;
+  width: 55px;
+  text-align: center;
+}
+
+.feature, .feature-text {
+  display: block;
+  overflow: hidden;
+}
+
+.feature-text h3 {
+  margin-top: 0;
+}
