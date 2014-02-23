@@ -5,8 +5,10 @@
       h3 Todo.txt++
       p.lead A <a href = "http://todotxt.com">Todo.txt</a> web client with Dropbox integration. All code is open-source (MIT license) and available on <a href = "http://github.com/trestletech/Todo.txt">GitHub</a>. 
     .col-sm-2.col-sm-offset-1
-      a(href="/login")
-        button.btn-lg.btn-info#sign-up Sign Up Now!
+      // We will actually offer this page to logged in users at /home, so don't always show this button
+      if !username
+        a(href="/login")
+          button.btn-lg.btn-info#sign-up Sign Up Now!
 hr
 
 .container-fluid

@@ -35,7 +35,14 @@ script.
       editor.getSession().on('change', function(e) {
         modified=true;
       });
-
+    })
+    .fail(function(xhr, status){
+      $(document).trigger("add-alerts", [
+        {
+          'message': "Unable to load file from Dropbox. Please try again later.",
+          'priority': 'error'
+        }
+      ]);
     });
   });
 
@@ -48,7 +55,6 @@ script.
       }
     })
     .fail(function(xhr, status, err){
-      console.log(err);
       $(document).trigger("add-alerts", [
         {
           'message': "Error saving file: " + status,
