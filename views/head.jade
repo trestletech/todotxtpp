@@ -48,11 +48,11 @@ body
               ul.dropdown-menu
                 li
                   a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:['.txt', '.text']});") 
-                    span.glyphicon.glyphicon-file
-                    |  Choose file
+                    i.fa.fa-folder-open-o
+                    |  Choose File
                 li
                   a(href="/logout") 
-                    span.glyphicon.glyphicon-log-out
+                    i.fa.fa-sign-out
                     |  Logout
           else
             li.logged-out

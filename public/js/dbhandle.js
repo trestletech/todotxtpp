@@ -17,7 +17,9 @@ function onDBSuccess(files){
     }
   })
   .done(function(){
-
+    // Great. The server now knows our path, but we're probably on a useless
+    // "choose your file" page. Should we just refresh? Sure.
+    location.reload();
   })
   .fail(function(){
     alert("Unable to set path.");

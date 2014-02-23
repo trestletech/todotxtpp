@@ -9,6 +9,18 @@
   margin-top: 1.5em;
 }
 
+#choose-file {
+  font-size: 24px;
+  text-align: left;
+  margin-top: 3.2em;  
+}
+
+#choose-file i {
+  float: left;
+  display: block;
+  padding-right: 12px;
+}
+
 .feature-icon {
   color: #75caeb;
   float: left;
