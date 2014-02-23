@@ -22,7 +22,7 @@
     "passport-dropbox-oauth2" : "0.1.x",
     "express"       : "3.4.x",
     "client-sessions" : "0.6.x",
-    "jade" :          "1.1.x"
+    "jade"          : "1.1.x"
   },
   "license": "MIT",
   "engines": {

@@ -25,6 +25,8 @@ head
   meta(http-equiv="X-UA-Compatible", content="IE=edge")
   meta(name="viewport",content="width=device-width, initial-scale=1")
 body
+  script(src="/js/ace.js")
+  script(src="/js/mode-todotxt.js")
 
   nav.navbar.navbar-default(role="navigation")
     .container-fluid
@@ -47,7 +49,7 @@ body
                 b.caret
               ul.dropdown-menu
                 li
-                  a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:['.txt', '.text']});") 
+                  a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:dbExtensions});") 
                     i.fa.fa-folder-open-o
                     |  Choose File
                 li

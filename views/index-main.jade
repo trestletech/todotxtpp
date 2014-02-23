@@ -1,6 +1,28 @@
 
 .container-fluid
   .row-fluid
-    .col-sm-7
-      p Using path: 
-      = path
+    .col-sm-12
+      #ace-editor
+.container-fluid
+  .row-fluid
+    .col-sm-2.col-sm-offset-10
+      a(href="#" onclick="$.ajax('/list', {type: 'POST', data : {text: ace.edit('ace-editor').getSession().getValue() }});")
+        button.btn-md.btn-info
+          i.fa.fa-floppy-o.fa-2x
+          #save-btn Save
+
+
+script.
+  $(document).ready(function(){
+    var editor = ace.edit("ace-editor");
+
+    editor.getSession().setMode("ace/mode/todotxt");
+
+    $.ajax('/list')
+    .done(function(data){
+      editor.setValue(data);
+    });
+
+  });
+
+  

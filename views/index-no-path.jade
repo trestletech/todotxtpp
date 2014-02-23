@@ -4,9 +4,9 @@
     .col-sm-7
       h2 Open Your Todo.txt File
       p.lead Great! We're all hoked up to your Dropbox account, but we don't know which Dropbox file you want to use as your Todo.txt file. Click the big "Choose File" button then click the text file you want us to use.
-      p You can always change this later by clicking your name in the top right and clicking "Choose File". Currently you're only allowed to use files ending in <code>.txt</code> or <code>.text</code>.
+      p You can always change this later by clicking your name in the top right and clicking "Choose File". Currently you're only allowed to use files ending in <code>.txt</code>, <code>.ttxt</code> or <code>.text</code>.
     .col-sm-3.col-sm-offset-1
-      a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:['.txt', '.text']});")
+      a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:dbExtensions});")
         button.btn-lg.btn-info#choose-file
           i.fa.fa-folder-open-o.fa-3x
           .feature Choose File

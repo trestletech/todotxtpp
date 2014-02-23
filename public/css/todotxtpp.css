@@ -15,7 +15,7 @@
   margin-top: 3.2em;  
 }
 
-#choose-file i {
+button i {
   float: left;
   display: block;
   padding-right: 12px;
@@ -29,11 +29,20 @@
   text-align: center;
 }
 
-.feature, .feature-text {
+#save-btn{
+  font-size: 18px;
+  width: 100px;
+}
+
+.feature, .feature-text, #btn-save {
   display: block;
   overflow: hidden;
 }
 
 .feature-text h3 {
   margin-top: 0;
+}
+
+#ace-editor {
+  height: 300px;
 }

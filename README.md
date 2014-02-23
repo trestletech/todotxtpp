@@ -17,3 +17,7 @@ Once you register the app, place the key and secret in a file named `dropbox.jso
 Rather than storing information in a centralized database, Todo.txt++ stores user information in encrypted cookies on the user's browsers. This simplifies the setup/maintenance process as you don't have to worry about maintaining a database on your server. 
 
 The cookies are encrypted using a binary file in this directory named `clientSessions.key` which will be generated for you (using a secure, cryptographic generator) the first time you run the application if it doesn't exist. Feel free to modify this file to specify your own key, but be aware that changing the key will invalidate all existing cookies stored on your visitor's browsers. So they'll all need to go through the login/Dropbox approval screen again the next time they visit.
+
+### External Assets
+
+Most libraries we can load unaltered from CDNs. The [Ace Editor](http://ace.c9.io), however, is custom as we added a Todo.txt syntax highlighter that doesn't come standard. (The highlighting regex rules were initially taken from [this project](https://github.com/dertuxmalwieder/SublimeTodoTxt).) To build this yourself, you'll need to clone [the forked repo](https://github.com/trestletech/ace) which has this custom Syntax highlighter.

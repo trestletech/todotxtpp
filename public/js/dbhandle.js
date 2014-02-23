@@ -1,4 +1,6 @@
 
+var dbExtensions = ['.txt', '.text', '.ttxt'];
+
 function onDBSuccess(files){
   // We only get one file
   var link = files[0].link;
