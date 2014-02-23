@@ -21,6 +21,7 @@ script.
   }
 
   var editor;
+  var revision = 0;
   $(document).ready(function(){
     editor = ace.edit("ace-editor");
 
@@ -28,10 +29,10 @@ script.
     editor.setShowPrintMargin(false);
     editor.getSession().setUseWrapMode('free');
 
-
     $.ajax('/list')
     .done(function(data){
-      editor.setValue(data, -1);
+      editor.setValue(data.text, -1);
+      revision = data.revision;
       editor.getSession().on('change', function(e) {
         modified=true;
       });
@@ -51,23 +52,34 @@ script.
     $.ajax('/list', {
       type: 'POST', 
       data : {
-        text: editor.getSession().getValue() 
+        text: editor.getSession().getValue(),
+        revision: revision 
       }
+    })
+    .done(function(data){
+      if (data.errors && data.errors.length > 0){
+        $(document).trigger("add-alerts", [
+          {
+            'message': data.errors[0],
+            'priority': 'error'
+          }
+        ]);
+        return;
+      }
+      modified = false;
+      revision = data.revision;
+      $(document).trigger("add-alerts", [
+        {
+          'message': "Saved successfully.",
+          'priority': 'info'
+        }
+      ]);
     })
     .fail(function(xhr, status, err){
       $(document).trigger("add-alerts", [
         {
           'message': "Error saving file: " + status,
           'priority': 'error'
-        }
-      ]);
-    })
-    .done(function(){
-      modified = false;
-      $(document).trigger("add-alerts", [
-        {
-          'message': "Saved successfully.",
-          'priority': 'info'
         }
       ]);
     })
