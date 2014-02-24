@@ -6,13 +6,14 @@
 }
 
 #sign-up {
-  margin-top: 1.5em;
+  margin-top: 3.5em;
 }
 
 #choose-file {
   font-size: 24px;
   text-align: left;
   margin-top: 3.2em;  
+  width: 100%;
 }
 
 button i {
@@ -47,4 +48,15 @@ button i {
 #ace-editor {
   height: 300px;
   border: 1px solid #CCC;
+}
+
+.navbar-brand img {
+  float: left;  
+  width: 32px;
+  height: 32px;
+  margin: -5px 8px 0 -5px;
+}
+
+.no-top {
+  margin-top: 0;
 }

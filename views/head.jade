@@ -1,7 +1,7 @@
 doctype html
 html(lang="en")
 head
-  title My Site
+  title Todo.txt++
   
   // jQuery
   script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js")
@@ -26,9 +26,11 @@ head
   // FontAwesome
   link(href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",rel="stylesheet")
 
+
   meta(charset="utf-8")
   meta(http-equiv="X-UA-Compatible", content="IE=edge")
   meta(name="viewport",content="width=device-width, initial-scale=1")
+
 body
   script(src="/js/ace.js")
   script(src="/js/mode-todotxt.js")
@@ -39,7 +41,9 @@ body
         button.navbar-toggle(type="button",data-toggle="collapse",data-target="#bs-example-navbar-collapse-1")
           span.sr-only Toggle nav
           span.icon-bar
-        a.navbar-brand(href="/home") Todo.txt++
+        a.navbar-brand(href="/home") 
+          img(src="/images/todotxtpp-sm.png")
+          | Todo.txt++
 
       .collapse.navbar-collapse#bs-example-navbar-collapse-1
         

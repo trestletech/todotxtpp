@@ -1,14 +1,20 @@
 
 .container-fluid
   .row-fluid
-    .col-sm-7
-      h3 Todo.txt++
-      p.lead A <a href = "http://todotxt.com">Todo.txt</a> web client with Dropbox integration. All code is open-source (MIT license) and available on <a href = "http://github.com/trestletech/Todo.txt">GitHub</a>. 
-    .col-sm-2.col-sm-offset-1
+    .col-md-4
+      img(src="/images/todotxtpp.png")
+    .col-md-5
+      h3.no-top Todo.txt++
+      p.lead An online ToDo list based on the <a href = "http://todotxt.com">Todo.txt</a> format complete with with Dropbox integration. If you keep your ToDos in a text file, you've already done the hardest part. 
+      p.lead All code is open-source (MIT license) and available on <a href = "http://github.com/trestletech/Todo.txt">GitHub</a>. 
+    .col-md-2.col-md-offset-1
       // We will actually offer this page to logged in users at /home, so don't always show this button
       if !username
         a(href="/login")
           button.btn-lg.btn-info#sign-up Sign Up Now!
+      else
+        a(href="/")
+          button.btn-lg.btn-info#sign-up View My Todos
 hr
 
 .container-fluid
@@ -25,11 +31,11 @@ hr
         i.fa.fa-share.fa-3x.feature-icon
         .feature-text
           h3 Standards Compliant
-          p We play by the rules. We can understand your existing Todo.txt file and whatever changes you make here will be understood by any other Todo.txt-compliant program.
+          p We play by <a href = "https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format">the rules</a>. We can understand your existing Todo.txt file and whatever changes you make here will be understood by any other Todo.txt-compliant program.
 
     .col-md-4
       .feature
         i.fa.fa-italic.fa-3x.feature-icon
         .feature-text
           h3 Raw Text Support
-          p Sometimes you want control; we get it. Switch over to a familiar raw text view at any time to edit your todo list.
+          p Sometimes you want control; we get it. Switch over to a familiar raw text view at any time to edit your todo list. We even have Todo.txt syntax highlighting.
