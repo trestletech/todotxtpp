@@ -6,6 +6,15 @@ A NodeJS web application that supports interfacing with the [Todo.txt](http://to
 
 ## Setup & Configuration
 
+### Environment Variables
+
+For now, the application is largely controlled through environment variables rather than a configuration file. The following variables are available:
+
+ - `TODOPORT` - The port on which the server will be created. By default, `3000`.
+ - `TODOKEY` - The full path to the SSL key to use in creating an HTTPS server. You must also specify a `TODOCERT` variable in order for this setting to have any effect.
+ - `TODOCERT` - The full path to the SSL certificate to use in creating an HTTPS server. You must also specify a `TODOKEY` variable in order for this setting to have any effect.
+ - `TODOHOST` - The hostname of the server you're running on. This is needed in order for Dropbox to refer the client back to your server when logging in.
+
 ### Dropbox Application
 
 You'll need to register a Dropbox application which can be done [here](https://www.dropbox.com/developers/apps). You app needs to be a "Dropbox API app" with access to all files (not only the ones it creates) but only of the "Text" type.
