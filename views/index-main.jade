@@ -29,9 +29,14 @@ script.
     editor.setShowPrintMargin(false);
     editor.getSession().setUseWrapMode('free');
 
+    refreshList();
+  });
+
+  function refreshList(){
     $.ajax('/list')
     .done(function(data){
       editor.setValue(data.text, -1);
+      modified = false;
       revision = data.revision;
       editor.getSession().on('change', function(e) {
         modified=true;
@@ -45,7 +50,39 @@ script.
         }
       ]);
     });
-  });
+  }
+    
+  registerCheck();
+
+  /**
+   * Register a periodic check to ensure the version on Dropbox hasn't updated
+   * beyond the version that we have. If it has and we've modified, show a 
+   * persistent error. If it has and we haven't modified, just update to the 
+   * latest remote version.
+   **/
+  function registerCheck(){
+    window.setInterval(function(){
+      if (!revision){
+        // There's nothing we can do yet.
+        return;
+      }
+      $.ajax('/revision')
+      .done(function(rev){
+        console.log("Checking rev");
+        if (rev > revision){        
+          console.log("Rev greater! - " + rev + " > " + revision + " : " + modified);  
+          if (modified){
+            // The remote version is more recent.
+            // Clear classes
+            $('#persAlerts').attr('class', 'alert alert-danger');            
+            $('#persAlerts').text('The remote Todo file has been updated. Your local changes cannot be saved. Please refresh the page to view the updates and discard your local changes.');                          
+          } else{
+            refreshList();
+          }
+        }
+      });
+    }, 60000);
+  }
 
   saveFile = function(){
     $('#save-btn').prop('disabled', true);
