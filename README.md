@@ -4,6 +4,8 @@ Todo.txt++
 
 A NodeJS web application that supports interfacing with the [Todo.txt](http://todotxt.com/) protocol with Dropbox integration. Hosted online at [http://todotxtpp.com](http://todotxtpp.com).
 
+![Todo.txt++ Screenshot](http://trestletech.github.io/Todo.txt/images/todo-screenshot.png)
+
 ### Features
  - Dropbox synchronization
  - Text editor with Todo.txt syntax highlighting
