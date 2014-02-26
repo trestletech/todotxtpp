@@ -38,16 +38,16 @@ The code should be [Heroku](http://heroku.com)-friendly, you'll just need to `co
 
 For now, the application is largely controlled through environment variables rather than a configuration file. The following variables are available:
 
- - `TODO_PORT` or, if that's not found, `PORT`- The port on which the server will be created. By default, `3000`.
-  - `TODO_DOMAIN`* - The full domain (with protocol and port) of the server you're running on, as accessed by your clients. This is needed in order for Dropbox to refer the client back to your server when logging in.
+ - `TODO_DOMAIN`* - The full domain (with protocol and port) of the server you're running on, as accessed by your clients. This is needed in order for Dropbox to refer the client back to your server when logging in.
  - `TODO_DROPBOX_KEY`* - The key of your Dropbox application to use for Dropbox OAuth (see the "Dropbox Application" section below).
  - `TODO_DROPBOX_SECRET`* - The secret of your Dropbox application to use for Dropbox OAuth (see the "Dropbox Application" section below).
+ - `TODO_PORT` or, if that's not found, `PORT`- The port on which the server will be created. By default, `3000`.
  - `TODO_SESSION_KEY` - If you don't want a private sessions key to be generated for you, you can specify your own in this variable. Note that this configuration will override any key found in `clientSessions.key`.
- - `TODO_SSL_KEY` - The full path to the SSL key to use in creating an HTTPS server. You must also specify a `TODOCERT` variable in order for this setting to have any effect.
- - `TODO_SSL_CERT` - The full path to the SSL certificate to use in creating an HTTPS server. You must also specify a `TODOKEY` variable in order for this setting to have any effect.
+ - `TODO_SSL_KEY` - The full path to the SSL key to use in creating an HTTPS server. You must also specify a `TODO_SSL_CERT` variable in order for this setting to have any effect.
+ - `TODO_SSL_CERT` - The full path to the SSL certificate to use in creating an HTTPS server. You must also specify a `TODO_SSL_KEY` variable in order for this setting to have any effect.
  - `TODO_FORCE_DOMAIN` - Will force visitors to use the exact domain you provided when visiting the site (including HTTP/S and the presence/lack of a `www` prefix). Default is false. Set to `1` to enable. Provides a convenient way to ensure that your users are using the proper protocol and prefix.
 
-* Settings you must provide
+*Settings you must provide.
 
 ### Dropbox Application
 

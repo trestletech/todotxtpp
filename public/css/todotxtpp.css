@@ -7,6 +7,9 @@
 
 #sign-up {
   margin-top: 3.5em;
+  width: 60%;
+  margin-left: 20%;
+  margin-right: 20%;
 }
 
 #choose-file {

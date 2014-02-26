@@ -5,13 +5,13 @@
       img(src="/images/todotxtpp.png")
     .col-md-5
       h3.no-top Todo.txt++
-      p.lead An online ToDo list based on the <a href = "http://todotxt.com">Todo.txt</a> format complete with with Dropbox integration. If you keep your ToDos in a text file, you've already done the hardest part. 
+      p.lead An online todo list manager based on the <a href = "http://todotxt.com">Todo.txt</a> format &mdash; complete with with Dropbox integration. If you keep your todos in a text file, you've already finished the hardest part. 
       p.lead All code is open-source (MIT license) and available on <a href = "http://github.com/trestletech/Todo.txt">GitHub</a>. 
-    .col-md-2.col-md-offset-1
+    .col-md-3
       // We will actually offer this page to logged in users at /home, so don't always show this button
       if !username
         a(href="/login")
-          button.btn-lg.btn-info#sign-up Sign Up Now!
+          button.btn-lg.btn-info#sign-up Get Started Now!
       else
         a(href="/")
           button.btn-lg.btn-info#sign-up View My Todos
