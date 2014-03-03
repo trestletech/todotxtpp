@@ -65,12 +65,13 @@ body
             li.logged-out
               a(href="/login") Login
 
-        form.navbar-form.navbar-right(role="search")
-          .form-group#search-form
-            input#search-input(type="text",placeholder="Search")
-            #search-btn-container
-              #search-btn(type="submit")
-                i.fa.fa-search
+        if path
+          form.navbar-form.navbar-right(role="search")
+            .form-group#search-form
+              input#search-input(type="text",placeholder="Search")
+              #search-btn-container
+                #search-btn(type="submit")
+                  i.fa.fa-search
 
             
   #persAlerts
