@@ -1,6 +1,8 @@
 (function(){
   var exports = window.Todotxt = {};
 
+  var file = exports.file = '';
+
   var dbExtensions = exports.dbExtensions = ['.txt', '.text', '.ttxt'];
 
   $(document).ready(function(){
@@ -19,6 +21,24 @@
       }
     });
   });
+
+  var getList = exports.getList = function(callback, forceRefresh){
+    if (arguments.length < 2){
+      forceRefresh = false;
+    }
+
+    if (!forceRefresh && file){
+      return callback(null, file);
+    }
+
+    $.ajax('/list')
+    .done(function(data){
+      callback(null, data);
+    })
+    .fail(function(xhr, status){
+      callback(new Error('Error downloading file: ' + status), null);
+    });
+  }
 
   var onDBSuccess = exports.onDBSuccess = function(files){
     // We only get one file

@@ -35,28 +35,25 @@ script.
     editor.setShowPrintMargin(false);
     editor.getSession().setUseWrapMode('free');
 
-    refreshList();
-  });
+    Todotxt.getList(function(err, data){
+      if (err){
+        $(document).trigger("add-alerts", [
+          {
+            'message': "Unable to load file from Dropbox. Please try again later.",
+            'priority': 'error'
+          }
+        ]);
+        return;
+      }
 
-  function refreshList(){
-    $.ajax('/list')
-    .done(function(data){
       editor.setValue(data.text, -1);
       modified = false;
       revision = data.revision;
       editor.getSession().on('change', function(e) {
         modified=true;
       });
-    })
-    .fail(function(xhr, status){
-      $(document).trigger("add-alerts", [
-        {
-          'message': "Unable to load file from Dropbox. Please try again later.",
-          'priority': 'error'
-        }
-      ]);
-    });
-  }
+    }, true);
+  });
     
   registerCheck();
 
@@ -83,7 +80,24 @@ script.
             $('#persAlerts').attr('class', 'alert alert-danger');            
             $('#persAlerts').text('The remote Todo file has been updated. Your local changes cannot be saved. Please refresh the page to view the updates and discard your local changes.');                          
           } else{
-            refreshList();
+            Todotxt.getList(function(err, data){
+              if (err){
+                $(document).trigger("add-alerts", [
+                  {
+                    'message': "Unable to load file from Dropbox. Please try again later.",
+                    'priority': 'error'
+                  }
+                ]);
+                return;
+              }
+
+              editor.setValue(data.text, -1);
+              modified = false;
+              revision = data.revision;
+              editor.getSession().on('change', function(e) {
+                modified=true;
+              });
+            }, true);
           }
         }
       });
