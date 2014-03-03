@@ -63,3 +63,48 @@ button i {
 .no-top {
   margin-top: 0;
 }
+
+#search-input{
+  border: none;
+  margin-left: 6px;
+  line-height: 16px;
+}
+
+#search-input:focus {
+  outline: 0;
+}
+
+#search-form {
+  margin-top: 3px;
+  border: 1px solid #AAA;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  background-color: #FFF;
+  line-height: 28px;
+}
+
+#search-btn-container {
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  background-color: #DDD;
+  display: inline-block;
+  float: right;
+  cursor: pointer;
+  cursor: hand;
+}
+
+#search-btn{
+  border: none;
+  border-left: 1px solid #AAA;  
+  background-color: #DDD;
+  height: 28px;
+  margin-right: 6px;
+  display: inline-block;
+  padding: 0;
+  float: right;
+}
+
+#search-btn i {
+  padding-right: 5px;
+  padding-left: 7px;
+}

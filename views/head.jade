@@ -18,7 +18,7 @@ head
 
   // Custom JS & CSS
   link(rel='stylesheet', href='/css/todotxtpp.css')
-  script(src="/js/dbhandle.js")
+  script(src="/js/todotxtpp.js")
 
   // Dropbox JS for file chooser.
   script#dropboxjs(type="text/javascript", src="https://www.dropbox.com/static/api/2/dropins.js", data-app-key="ds8bn744aonco6i")
@@ -43,11 +43,9 @@ body
           span.icon-bar
         a.navbar-brand(href="/home") 
           img(src="/images/todotxtpp-sm.png")
-          | Todo.txt++
+          | Todo.txt++        
 
-      .collapse.navbar-collapse#bs-example-navbar-collapse-1
-        
-
+      .collapse.navbar-collapse#bs-example-navbar-collapse-1        
         ul.nav.navbar-nav.navbar-right
           if username
             li.logged-in
@@ -56,7 +54,7 @@ body
                 b.caret
               ul.dropdown-menu
                 li
-                  a(href="#" onclick="Dropbox.choose({success: onDBSuccess, linkType:'direct', extensions:dbExtensions});") 
+                  a(href="#" onclick="Dropbox.choose({success: Todotxt.onDBSuccess, linkType:'direct', extensions:Todotxt.dbExtensions});") 
                     i.fa.fa-folder-open-o
                     |  Choose File
                 li
@@ -66,6 +64,14 @@ body
           else
             li.logged-out
               a(href="/login") Login
+
+        form.navbar-form.navbar-right(role="search")
+          .form-group#search-form
+            input#search-input(type="text",placeholder="Search")
+            #search-btn-container
+              #search-btn(type="submit")
+                i.fa.fa-search
+
             
   #persAlerts
   div(data-alerts="alerts", data-ids="flash", data-fade="5000")
