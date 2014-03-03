@@ -11,7 +11,7 @@
       var searchVal = $('#search-input').val();
       renderSearch(searchVal);
     });
-    $('#search-input').bind("keyup keypress", function(e) {
+    $('#search-input').bind("keypress", function(e) {
       var code = e.keyCode || e.which;
       if (code == 13) {
         var searchVal = $('#search-input').val();
@@ -20,6 +20,51 @@
         return false;
       }
     });
+
+    // Setup our router.
+    $(window).bind( 'hashchange', function( event ) {
+      var hash_str = event.fragment,
+        searchStr = event.getState('search');
+      // Deselect any "active" sidebar item.
+      $('a', '#sidebar').each(function(i, a){
+        $(a).removeClass();
+      });
+
+      if (searchStr){
+        // Render search        
+        var results = search(searchStr);
+        filterTo(results);
+        return
+      } 
+
+      if (!hash_str){
+        hash_str = 'ALL';
+      } 
+      
+      hash_str = hash_str.toUpperCase();
+
+      // On a named list
+
+      // Clear search input.
+      $('#search-input').val('');
+
+      // Mark as active
+      $('a', '#sidebar').each(function(i, a){
+        if ($(a).attr('data-name').toUpperCase() === hash_str){
+          $(a).addClass('active');
+        }
+      });
+
+
+      if (hash_str.toUpperCase() === "ALL"){
+        filterTo();
+      } else{
+        console.log(hash_str);
+        filterTo(search(hash_str));
+      }
+
+    });
+    $(window).trigger( 'hashchange' );
   });
 
   var getList = exports.getList = function(callback, forceRefresh){
@@ -92,7 +137,7 @@
       if (trimmed.length === 0){
         return null;
       }
-      return trimmed;
+      return trimmed.toUpperCase();
     });
 
     var matches = new Array(searchVals.length);
@@ -101,6 +146,7 @@
     }
 
     $.each(file.text.split('\n'), function(lineNum, line){
+      line = line.toUpperCase();
       $.each(searchVals, function(valNum, searchVal){
         if (searchVal && line.indexOf(searchVal) >= 0){
           // 1-Indexed line numbers match the editor.
@@ -119,12 +165,24 @@
    * Execute a search for the given string and render the results.
    **/
   var renderSearch = exports.renderSearch = function(searchVal){
-    // Clear out the old search box if we're rendering results.
-    $('#search-input').val('');
-
     var results = search(searchVal);
-    
-    // TODO
+    $.bbq.pushState({search: searchVal});
+  }
+
+  var filterTo = exports.filterTo = function(lineNums){
+    editor = ace.edit("ace-editor");
+
+    if (!lineNums){
+      editor.setValue(file.text, -1);
+      return;
+    }
+
+    var filtered = file.text.split('\n');
+    filtered = $.grep(filtered, function(el, i){
+      return ($.inArray(i+1, lineNums) >= 0);
+    });
+
+    editor.setValue(filtered.join('\n'), -1);
   }
   
 })();

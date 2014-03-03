@@ -6,12 +6,29 @@ head
   // jQuery
   script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js")
 
+  script.
+    // Really don't want to have to use Angular...
+    // https://github.com/cowboy/jquery-bbq/issues/52
+    jQuery.browser = {};
+    (function () {
+        jQuery.browser.msie = false;
+        jQuery.browser.version = 0;
+        if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+            jQuery.browser.msie = true;
+            jQuery.browser.version = RegExp.$1;
+        }
+    })();
+
+
   // Bootstrap
   link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
   script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
   
   // Bootstrap Alerts
   script(src="/js/jquery.bsAlerts.min.js")
+
+  // jQuery BBQ for simple SPA
+  script(src="/js/jquery.ba-bbq.min.js")
 
   // Lumen Bootstrap Theme
   link(rel='stylesheet', href='/css/lumen.css')

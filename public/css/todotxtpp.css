@@ -108,3 +108,34 @@ button i {
   padding-right: 5px;
   padding-left: 7px;
 }
+
+#sidebar {
+  border: 1px solid #AAA;
+  border-bottom: none;
+}
+
+#sidebar ul
+{
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+
+#sidebar a {
+  display:block;
+  background-color: #E3E3E3;
+  border-bottom: 1px solid #AAA;
+  padding: 5px;
+  color: #555;
+}
+
+#sidebar a:hover, #sidebar a.active{
+  text-decoration: none;
+  background-color: #EFF5F9;
+}
+
+.col-no-padding {
+   padding-left: 5px !important;
+   padding-right: 5px !important;
+   margin: 0 !important;
+}

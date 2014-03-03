@@ -7,7 +7,14 @@
 
 .container-fluid
   .row-fluid
-    .col-sm-12
+    .col-sm-2.col-no-padding
+      #sidebar
+        ul
+          li 
+            a(href="#",data-name="all") All
+          li
+            a(href="#here",data-name="here") Here
+    .col-sm-10.col-no-padding
       #ace-editor
 .container-fluid
   .row-fluid
