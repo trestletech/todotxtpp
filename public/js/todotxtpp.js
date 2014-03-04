@@ -1,11 +1,56 @@
 (function(){
   var exports = window.Todotxt = {};
 
+  /**
+   * Track file and revision # that we have downloaded.
+   **/
+  var revision = 0;
   var file = exports.file = '';
+
+  /**
+   * Track an integer array of the line numbers currently being shown
+   * in the editor.
+   **/
+  var currentFilter = exports.currentFilter = null;
+
+  var updateCallbacks = [];
 
   var dbExtensions = exports.dbExtensions = ['.txt', '.text', '.ttxt'];
 
+  /**
+   * Track whether or not the editor has been changed since the last update.
+   **/
+  var modified = false;
+
+  // Store the local copy of the editor
+  var editor = null;
+
   $(document).ready(function(){
+    // Schedule a periodic check to check Dropbox.
+    registerCheck();
+
+    addUpdateHook(function(data, source){
+      console.log("Handling update for " + source + " - " + $.param.fragment());
+      if (source === $.param.fragment()){
+        // We can ignore updates from the current page, since the editor would
+        // have already been updated as the user typed.
+        return;
+      }
+      /**
+       * Register a periodic check to ensure the version on Dropbox hasn't updated
+       * beyond the version that we have. If it has and we've modified, show a 
+       * persistent error. If it has and we haven't modified, just update to the 
+       * latest remote version.
+       **/
+      if (modified){
+        // The remote version is more recent.
+        $('#persAlerts').attr('class', 'alert alert-danger');            
+        $('#persAlerts').text('The remote Todo file has been updated. Your local changes cannot be saved. Please refresh the page to view the updates and discard your local changes.');                          
+      } else{
+        setText(data.text, -1);
+      }
+    });
+
     // Bind for search events.
     $('#search-btn-container').click(function(e){
       var searchVal = $('#search-input').val();
@@ -56,34 +101,36 @@
       });
 
       if (hash_str.toUpperCase() === "ALL"){
-        filterTo();
+        filterTo();        
       } else{
         filterTo(search(hash_str));
       }
+      modified = false;
 
     });
     $(window).trigger( 'hashchange' );
   });
-
-  /**
-   * Track file revision that we have downloaded.
-   **/
-  var revision = 0;
 
   var getRevision = exports.getRevision = function(){
     return revision;
   }
 
   /**
-   * Track an integer array of the line numbers currently being shown
-   * in the editor.
+   * Add a function callback when the Todolist file is updated.
    **/
-  var currentFilter = exports.currentFilter = null;
+  var addUpdateHook = exports.addUpdateHook = function(callback){
+    updateCallbacks.push(callback);
+  }
+
+  var removeUpdateHook = exports.removeUpdateHook = function(callback){
+    updateCallbacks.splice(updateCallbacks.indexOf(callback),1);
+  }
 
   var save = exports.save = function(callback){    
     var appliedFilter = currentFilter;    
     var appliedText = editor.getSession().getValue();
-        
+    var sourceFrag = $.param.fragment();
+
     $.ajax('/list', {
       type: 'POST', 
       data : {
@@ -95,15 +142,16 @@
     .done(function(data){
       if (appliedFilter){
         // Need to merge the changes in to our local copy
-        file.text = mergeEdits(file.text, appliedFilter, appliedText);
+        file = mergeEdits(file, appliedFilter, appliedText);
       } else {
-        file.text = appliedText;
+        file = appliedText;
       }
-      // do we need to maintain this?
-      file.revision = data.revision;
-
       revision = data.revision;
       callback(null, data);
+
+      modified = false;
+
+      fireUpdate({text: file, revision: revision}, sourceFrag);
     })
     .fail(function(xhr, status, err){
       callback(err, null);
@@ -116,12 +164,12 @@
     }
 
     if (!forceRefresh && file){
-      return callback(null, file);
+      return callback(null, {text: file, revision: revision});
     }
 
     $.ajax('/list')
     .done(function(data){
-      file = data;      
+      file = data.text;
       revision = data.revision;
       callback(null, data);
     })
@@ -157,12 +205,22 @@
     });
   };
 
-  // Store the local copy of the editor
-  var editor = null;
-
   exports.setEditor = function(edtr){
     editor = edtr;
+    editor.getSession().on('change', function(e) {
+      modified = true;      
+    });
     return editor;
+  }
+
+  var setText = exports.setText = function(text, force){
+    if (modified && !force){
+      throw new Error("Can't update the file since it's been modified");
+    }
+
+    editor.setValue(text, -1);
+
+    modified = false;
   }
 
   /**
@@ -197,7 +255,7 @@
       matches[i] = [];
     }
 
-    var splitLine = file.text.split(/\r?\n/);
+    var splitLine = file.split(/\r?\n/);
     $.each(splitLine, function(lineNum, line){
       line = line.toUpperCase();
       $.each(searchVals, function(valNum, searchVal){
@@ -211,9 +269,6 @@
     if (singleMode){
       matches = matches[0];
     }
-
-    console.log("Searching return");
-    console.log(matches);
 
     return matches;
   }
@@ -235,18 +290,54 @@
     currentFilter = lineNums;
 
     if (!lineNums){
-      editor.setValue(file.text, -1);
+      editor.setValue(file, -1);
       return;
     }
 
-    var str2 = file.text;
+    var str2 = file;
 
-    var filtered = file.text.split(/\r?\n/);
+    var filtered = file.split(/\r?\n/);
     filtered = $.grep(filtered, function(el, i){
       return ($.inArray(i+1, lineNums) >= 0);
     });
 
     var str = filtered.join('\n');
-    editor.setValue(str, -1);
-  }  
+    setText(str);
+  }
+
+  /**
+   * Register a periodic check to keep our file up-to-date with the one on
+   * Dropbox.
+   **/
+  function registerCheck(){
+    window.setInterval(function(){
+      if (!revision){
+        // There's nothing we can do yet.
+        return;
+      }
+      $.ajax('/revision')
+      .done(function(rev){
+        if (rev > revision){
+          getList(function(err, update){
+            if (!err){
+              fireUpdate(update, '__external__');
+            }
+          }, true);
+        }
+      });
+    }, 15000);
+  }
+
+  /**
+   * Fires an update to call all callback functions.
+   * @param update The update object with the text and revision #.
+   * @param external String representing the source (page) of the update
+   *   or '__external__' if it came from an external source.
+   **/
+  function fireUpdate(update, source){
+    $.each(updateCallbacks, function(i, cb){
+      cb(update, source);
+    });
+  }
+
 })();

@@ -24,15 +24,6 @@
         | Save
 
 script.
-  var modified = false;
-
-  window.onbeforeunload = function(){
-    if (modified){
-      return 'You have changes that have not yet been saved to Dropbox. If you leave, any unsaved changes will be lost.';
-    }
-    return;
-  }
-
   var editor;
   $(document).ready(function(){
     var editor = Todotxt.setEditor(ace.edit("ace-editor"));
@@ -52,61 +43,10 @@ script.
         return;
       }
 
-      editor.setValue(data.text, -1);
-      modified = false;
-      editor.getSession().on('change', function(e) {
-        modified=true;
-      });
+      Todotxt.setText(data.text);
     }, true);
   });
     
-  registerCheck();
-
-  /**
-   * Register a periodic check to ensure the version on Dropbox hasn't updated
-   * beyond the version that we have. If it has and we've modified, show a 
-   * persistent error. If it has and we haven't modified, just update to the 
-   * latest remote version.
-   **/
-  function registerCheck(){
-    window.setInterval(function(){
-      if (!Todotxt.getRevision()){
-        // There's nothing we can do yet.
-        return;
-      }
-      $.ajax('/revision')
-      .done(function(rev){
-        console.log("Checking rev");
-        if (rev > Todotxt.getRevision()){
-          if (modified){
-            // The remote version is more recent.
-            // Clear classes
-            $('#persAlerts').attr('class', 'alert alert-danger');            
-            $('#persAlerts').text('The remote Todo file has been updated. Your local changes cannot be saved. Please refresh the page to view the updates and discard your local changes.');                          
-          } else{
-            Todotxt.getList(function(err, data){
-              if (err){
-                $(document).trigger("add-alerts", [
-                  {
-                    'message': "Unable to load file from Dropbox. Please try again later.",
-                    'priority': 'error'
-                  }
-                ]);
-                return;
-              }
-
-              editor.setValue(data.text, -1);
-              modified = false;
-              editor.getSession().on('change', function(e) {
-                modified=true;
-              });
-            }, true);
-          }
-        }
-      });
-    }, 15000);
-  }
-
   saveFile = function(){
     $('#save-btn').prop('disabled', true);
     Todotxt.save(function(err, data){
@@ -133,7 +73,6 @@ script.
         return;
       }
 
-      modified = false;
       $(document).trigger("add-alerts", [
         {
           'message': "Saved successfully.",
