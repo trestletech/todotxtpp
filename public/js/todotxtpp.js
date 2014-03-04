@@ -25,13 +25,21 @@
   // Store the local copy of the editor
   var editor = null;
 
+  var ignoreNextHashchange = false;
+
   $(document).ready(function(){
     // Schedule a periodic check to check Dropbox.
     registerCheck();
 
-    addUpdateHook(function(data, source){
-      console.log("Handling update for " + source + " - " + $.param.fragment());
-      if (source === $.param.fragment()){
+    window.onbeforeunload = function(){
+      if (modified){
+        return 'You have changes that have not yet been saved to Dropbox. If you leave, any unsaved changes will be lost.';
+      }
+      return;
+    }
+
+    addUpdateHook(function(data, external){
+      if (!external){
         // We can ignore updates from the current page, since the editor would
         // have already been updated as the user typed.
         return;
@@ -68,6 +76,26 @@
 
     // Setup our router.
     $(window).bind( 'hashchange', function( event ) {
+      if (modified && !ignoreNextHashchange){
+        $(document).trigger("add-alerts", [
+          {
+            'message': "You must save your changes here before you can change pages.",
+            'priority': 'warning'
+          }
+        ]);
+        ignoreNextHashchange = true;
+        history.back();
+        return false;
+      }
+
+      if (ignoreNextHashchange){
+        // We were instructed to ignore this hash change.
+        ignoreNextHashchange = false;
+        return;
+      }
+
+      
+
       var hash_str = event.fragment,
         searchStr = event.getState('search');
       // Deselect any "active" sidebar item.
@@ -129,8 +157,7 @@
   var save = exports.save = function(callback){    
     var appliedFilter = currentFilter;    
     var appliedText = editor.getSession().getValue();
-    var sourceFrag = $.param.fragment();
-
+    
     $.ajax('/list', {
       type: 'POST', 
       data : {
@@ -151,7 +178,7 @@
 
       modified = false;
 
-      fireUpdate({text: file, revision: revision}, sourceFrag);
+      fireUpdate({text: file, revision: revision}, false);
     })
     .fail(function(xhr, status, err){
       callback(err, null);
@@ -320,7 +347,7 @@
         if (rev > revision){
           getList(function(err, update){
             if (!err){
-              fireUpdate(update, '__external__');
+              fireUpdate(update, true);
             }
           }, true);
         }
@@ -331,12 +358,12 @@
   /**
    * Fires an update to call all callback functions.
    * @param update The update object with the text and revision #.
-   * @param external String representing the source (page) of the update
-   *   or '__external__' if it came from an external source.
+   * @param external Boolean representing whether the update came from an
+   *   external source (true) or this application (false).
    **/
-  function fireUpdate(update, source){
+  function fireUpdate(update, external){
     $.each(updateCallbacks, function(i, cb){
-      cb(update, source);
+      cb(update, external);
     });
   }
 
