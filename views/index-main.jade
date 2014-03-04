@@ -35,7 +35,7 @@ script.
 
   var editor;
   $(document).ready(function(){
-    editor = ace.edit("ace-editor");
+    var editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
     editor.getSession().setMode("ace/mode/todotxt");
     editor.setShowPrintMargin(false);
@@ -123,7 +123,7 @@ script.
         return;
       }
 
-      if (data.errors && data.errors.length > 0){
+      if (data && data.errors && data.errors.length > 0){
         $(document).trigger("add-alerts", [
           {
             'message': data.errors[0],

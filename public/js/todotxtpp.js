@@ -80,8 +80,10 @@
    **/
   var currentFilter = exports.currentFilter = null;
 
-  var save = exports.save = function(callback){
-    
+  var save = exports.save = function(callback){    
+    var appliedFilter = currentFilter;    
+    var appliedText = editor.getSession().getValue();
+        
     $.ajax('/list', {
       type: 'POST', 
       data : {
@@ -91,6 +93,15 @@
       }
     })
     .done(function(data){
+      if (appliedFilter){
+        // Need to merge the changes in to our local copy
+        file.text = mergeEdits(file.text, appliedFilter, appliedText);
+      } else {
+        file.text = appliedText;
+      }
+      // do we need to maintain this?
+      file.revision = data.revision;
+
       revision = data.revision;
       callback(null, data);
     })
@@ -146,6 +157,14 @@
     });
   };
 
+  // Store the local copy of the editor
+  var editor = null;
+
+  exports.setEditor = function(edtr){
+    editor = edtr;
+    return editor;
+  }
+
   /**
    * Perform a search for the given string using the local file.
    * @param searchVal A string or array of strings representing the pattern for 
@@ -178,7 +197,8 @@
       matches[i] = [];
     }
 
-    $.each(file.text.split('\n'), function(lineNum, line){
+    var splitLine = file.text.split(/\r?\n/);
+    $.each(splitLine, function(lineNum, line){
       line = line.toUpperCase();
       $.each(searchVals, function(valNum, searchVal){
         if (searchVal && line.indexOf(searchVal) >= 0){
@@ -190,7 +210,11 @@
 
     if (singleMode){
       matches = matches[0];
-    }    
+    }
+
+    console.log("Searching return");
+    console.log(matches);
+
     return matches;
   }
 
@@ -203,7 +227,10 @@
   }
 
   var filterTo = exports.filterTo = function(lineNums){
-    editor = ace.edit("ace-editor");
+    if (!editor){
+      console.log("WARN: can't really filter until editor is set. Aborting.");
+      return;
+    }
 
     currentFilter = lineNums;
 
@@ -212,12 +239,14 @@
       return;
     }
 
-    var filtered = file.text.split('\n');
+    var str2 = file.text;
+
+    var filtered = file.text.split(/\r?\n/);
     filtered = $.grep(filtered, function(el, i){
       return ($.inArray(i+1, lineNums) >= 0);
     });
 
-    editor.setValue(filtered.join('\n'), -1);
-  }
-  
+    var str = filtered.join('\n');
+    editor.setValue(str, -1);
+  }  
 })();

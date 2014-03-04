@@ -9,8 +9,8 @@
  * @return 'file' with the edits incorporated in.
  **/
 function mergeEdits(file, lineNums, edited){
-  var editedLines = edited.split('\n');
-  var lines = file.split('\n');
+  var editedLines = edited.split(/\r?\n/);
+  var lines = file.split(/\r?\n/);
 
   if (editedLines.length !== lineNums.length){
     throw new Error("Invalid merge requsted with " + lineNums.length + 
