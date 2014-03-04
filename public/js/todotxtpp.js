@@ -55,17 +55,49 @@
         }
       });
 
-
       if (hash_str.toUpperCase() === "ALL"){
         filterTo();
       } else{
-        console.log(hash_str);
         filterTo(search(hash_str));
       }
 
     });
     $(window).trigger( 'hashchange' );
   });
+
+  /**
+   * Track file revision that we have downloaded.
+   **/
+  var revision = 0;
+
+  var getRevision = exports.getRevision = function(){
+    return revision;
+  }
+
+  /**
+   * Track an integer array of the line numbers currently being shown
+   * in the editor.
+   **/
+  var currentFilter = exports.currentFilter = null;
+
+  var save = exports.save = function(callback){
+    
+    $.ajax('/list', {
+      type: 'POST', 
+      data : {
+        text: editor.getSession().getValue(),
+        revision: revision,
+        filter: currentFilter
+      }
+    })
+    .done(function(data){
+      revision = data.revision;
+      callback(null, data);
+    })
+    .fail(function(xhr, status, err){
+      callback(err, null);
+    });
+  }
 
   var getList = exports.getList = function(callback, forceRefresh){
     if (arguments.length < 2){
@@ -78,11 +110,12 @@
 
     $.ajax('/list')
     .done(function(data){
-      file = data;
+      file = data;      
+      revision = data.revision;
       callback(null, data);
     })
-    .fail(function(xhr, status){
-      callback(new Error('Error downloading file: ' + status), null);
+    .fail(function(xhr, status, err){
+      callback(err, null);
     });
   }
 
@@ -171,6 +204,8 @@
 
   var filterTo = exports.filterTo = function(lineNums){
     editor = ace.edit("ace-editor");
+
+    currentFilter = lineNums;
 
     if (!lineNums){
       editor.setValue(file.text, -1);

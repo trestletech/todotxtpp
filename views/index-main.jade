@@ -34,7 +34,6 @@ script.
   }
 
   var editor;
-  var revision = 0;
   $(document).ready(function(){
     editor = ace.edit("ace-editor");
 
@@ -55,7 +54,6 @@ script.
 
       editor.setValue(data.text, -1);
       modified = false;
-      revision = data.revision;
       editor.getSession().on('change', function(e) {
         modified=true;
       });
@@ -72,15 +70,14 @@ script.
    **/
   function registerCheck(){
     window.setInterval(function(){
-      if (!revision){
+      if (!Todotxt.getRevision()){
         // There's nothing we can do yet.
         return;
       }
       $.ajax('/revision')
       .done(function(rev){
         console.log("Checking rev");
-        if (rev > revision){        
-          console.log("Rev greater! - " + rev + " > " + revision + " : " + modified);  
+        if (rev > Todotxt.getRevision()){
           if (modified){
             // The remote version is more recent.
             // Clear classes
@@ -100,7 +97,6 @@ script.
 
               editor.setValue(data.text, -1);
               modified = false;
-              revision = data.revision;
               editor.getSession().on('change', function(e) {
                 modified=true;
               });
@@ -108,19 +104,25 @@ script.
           }
         }
       });
-    }, 60000);
+    }, 15000);
   }
 
   saveFile = function(){
     $('#save-btn').prop('disabled', true);
-    $.ajax('/list', {
-      type: 'POST', 
-      data : {
-        text: editor.getSession().getValue(),
-        revision: revision 
+    Todotxt.save(function(err, data){
+      
+      $('#save-btn').prop('disabled', false);
+
+      if (err){
+        $(document).trigger("add-alerts", [
+          {
+            'message': "Error saving file: " + status,
+            'priority': 'error'
+          }
+        ]);
+        return;
       }
-    })
-    .done(function(data){
+
       if (data.errors && data.errors.length > 0){
         $(document).trigger("add-alerts", [
           {
@@ -130,26 +132,15 @@ script.
         ]);
         return;
       }
+
       modified = false;
-      revision = data.revision;
       $(document).trigger("add-alerts", [
         {
           'message': "Saved successfully.",
           'priority': 'info'
         }
       ]);
-    })
-    .fail(function(xhr, status, err){
-      $(document).trigger("add-alerts", [
-        {
-          'message': "Error saving file: " + status,
-          'priority': 'error'
-        }
-      ]);
-    })
-    .always(function(){
-      $('#save-btn').prop('disabled', false);
-    })
+    });
   }
 
 
