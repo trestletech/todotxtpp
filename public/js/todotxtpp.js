@@ -31,6 +31,52 @@
     // Schedule a periodic check to check Dropbox.
     registerCheck();
 
+    $('#create-filter-ok').click(function(){
+      var filterStr = $('#create-filter-input').val();
+      $.ajax('/filters', {
+        type: 'POST', 
+        data : {
+          action: 'add',
+          filter: filterStr
+        }
+      })
+      .done(function(data){
+        //TODO: Append li to sidebar.
+      })
+      .fail(function(xhr, status, err){
+        $(document).trigger("add-alerts", [
+          {
+            'message': "Unable to add list.",
+            'priority': 'error'
+          }
+        ]);
+      });
+    });
+
+    $('.create-filter-option').click(function(event){
+      $('#create-filter-input').attr('placeholder', $(this).data('example'));
+      $('#create-filter-input').data('prefix', $(this).data('prefix'));
+      $('#create-filter-input').val('');
+      $(this).siblings().each(function(i, el){
+        $(this).removeClass('active-filter-option');
+      });
+      $(this).addClass('active-filter-option');
+    })
+
+    $('#create-filter-input').on('focus keypress', function(event){
+      var prefix = $(this).data('prefix');
+      if ($(this).val().indexOf(prefix) !== 0){
+        $(this).val($(this).data('prefix') + $(this).val());
+      }
+    });
+
+    $('#create-filter-input').on('blur', function(){
+      var prefix = $(this).data('prefix');
+      if ($(this).val() === prefix){
+        $(this).val('');
+      }
+    });
+
     $('.delete-list-btn').click(function(event){
       var menuItem = $(this).closest('li a');
       

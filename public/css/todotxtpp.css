@@ -190,3 +190,48 @@ button i {
 .delete-list-btn:hover {
   color: #F68;
 }
+
+#create-filter{
+  margin-top: 2em;
+}
+
+#createModal h3{
+  margin-top: 0;
+  
+}
+
+.create-type-icon{
+  float: right;
+  color: #DDF;
+}
+
+.create-type-icon, .create-type-text {
+  display: block;
+  overflow: hidden;
+}
+
+.create-type-text{
+  margin-top: 5px;
+}
+
+.create-filter-option {
+  min-height: 180px;
+  cursor: pointer;
+  cursor: hand;
+}
+
+.create-filter-option:hover, .active-filter-option {
+  background-color: #FFF;
+}
+
+.active-filter-option .create-type-icon {
+  color: #43C;
+}
+
+
+#create-filter-input {
+  width: 100%;
+  margin-bottom: 18px;
+  line-height: 36px;
+  font-size: 26px;
+}

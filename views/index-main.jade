@@ -27,6 +27,7 @@
             a(href="#here",data-name="location") 
               .list-icon.list-icon-at @
               | Location
+      button.btn.center-block#create-filter(data-toggle="modal" data-target="#createModal") Create Filter
     .col-sm-10.col-no-padding
       #ace-editor
 .container-fluid
@@ -55,6 +56,9 @@ script.
         return;
       }
     }, true);
+    
+
+    $('#createModal').modal('show');    ///////////////////////////////////////////
   });
     
   saveFile = function(){
@@ -92,8 +96,45 @@ script.
     });
   }
 
-#deleteFilter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteLabel', aria-hidden='true')
+
+
+#createModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='createModalLabel', aria-hidden='true')
   .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+        h4#createModalLabel.modal-title Create New Filter
+      .modal-body
+        .container-fluid
+          .row-fluid
+            .col-sm-12
+              input#create-filter-input(type="text",data-prefix="+",placeholder="+ProjectA")
+
+          .row-fluid
+            .col-sm-4.well.create-filter-option.active-filter-option(data-prefix="+",data-example="+ProjectA")
+              h3.create-type-icon +
+              h3 Project
+              | Arrange your tasks by the project to which you've assigned them. Great for viewing one project at a time.
+              
+            .col-sm-4.well.create-filter-option(data-prefix="@",data-example="@Phone")
+              h3.create-type-icon @
+              h3 Context
+              | View your tasks by context to see what you can work on right 
+              i now
+              | .
+              
+            .col-sm-4.well.create-filter-option(data-prefix="(",data-example="(A-C)")
+              h3.create-type-icon (A)
+              h3 Priority
+              | Keep an eye on your most important tasks. Filter based on the priority you assigned to a task.
+
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+        button.btn.btn-primary#create-filter-ok(type='button') Create
+
+
+#deleteFilter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteLabel', aria-hidden='true')
+  .modal-dialog.modal-sm
     .modal-content
       .modal-header
         button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
@@ -104,4 +145,4 @@ script.
         | ?
       .modal-footer
         button.btn.btn-default(type='button', data-dismiss='modal') Cancel
-        button.btn.btn-primary#delete-filter-btn(type='button') Yes, Delete it.
+        button.btn.btn-primary#delete-filter-btn(type='button') Yes, Delete it
