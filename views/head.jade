@@ -61,7 +61,7 @@ body
           span.icon-bar
         a.navbar-brand(href="/home") 
           img(src="/images/todotxtpp-sm.png")
-          | Todo.txt++        
+          | Todo.txt++
 
       .collapse.navbar-collapse#bs-example-navbar-collapse-1        
         ul.nav.navbar-nav.navbar-right
@@ -87,6 +87,8 @@ body
           form.navbar-form.navbar-right(role="search")
             .form-group#search-form
               input#search-input(type="text",placeholder="Search")
+              #clear-search()
+                i.fa.fa-times
               #search-btn-container
                 #search-btn(type="submit")
                   i.fa.fa-search

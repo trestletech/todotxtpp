@@ -38,6 +38,12 @@
       return;
     }
 
+    // Add a clear button on the search input that takes us back home
+    $('#clear-search').click(function(){
+      $.bbq.pushState();
+    });
+
+
     addUpdateHook(function(data, external){
       if (!external){
         // We can ignore updates from the current page, since the editor would
@@ -62,12 +68,18 @@
     // Bind for search events.
     $('#search-btn-container').click(function(e){
       var searchVal = $('#search-input').val();
+      if (searchVal.trim() === ''){
+        return;
+      }
       renderSearch(searchVal);
     });
     $('#search-input').bind("keypress", function(e) {
       var code = e.keyCode || e.which;
       if (code == 13) {
         var searchVal = $('#search-input').val();
+        if (searchVal.trim() === ''){
+          return;
+        }
         e.preventDefault();
         renderSearch(searchVal);
         return false;
@@ -104,9 +116,16 @@
       if (searchStr){
         // Render search        
         var results = search(searchStr);
+        
+        // Set the searchbar input if it wasn't already set.
+        $('#search-input').val(searchStr);
+        $('#clear-search').show();
+
         filterTo(results);
         return
       } 
+
+      $('#clear-search').hide();
 
       if (!hash_str){
         hash_str = 'ALL';
@@ -176,7 +195,6 @@
 
       modified = false;
       $(window).trigger( 'hashchange' );
-      modified = false;
 
       fireUpdate({text: file, revision: revision}, false);
     })
@@ -198,6 +216,10 @@
     .done(function(data){
       file = data.text;
       revision = data.revision;
+      
+      // We got a new file. We may need to re-render.
+      $(window).trigger( 'hashchange' );
+
       callback(null, data);
     })
     .fail(function(xhr, status, err){
@@ -309,8 +331,8 @@
   }
 
   var filterTo = exports.filterTo = function(lineNums){
+
     if (!editor){
-      console.log("WARN: can't really filter until editor is set. Aborting.");
       return;
     }
 
@@ -320,8 +342,6 @@
       editor.setValue(file, -1);
       return;
     }
-
-    var str2 = file;
 
     var filtered = file.split(/\r?\n/);
     filtered = $.grep(filtered, function(el, i){
