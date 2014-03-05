@@ -31,6 +31,21 @@
     // Schedule a periodic check to check Dropbox.
     registerCheck();
 
+    $('.delete-list-btn').click(function(event){
+      var menuItem = $(this).closest('li a');
+      
+      $('#delete-list-name').text(menuItem.data('name'));
+      
+      $('#delete-filter-btn').one('click', function(){
+        // TODO delete list.
+        $('#deleteFilter').modal('hide');
+      });
+
+      $('#deleteFilter').modal('show');
+      event.stopPropagation();
+      return false;
+    });
+
     window.onbeforeunload = function(){
       if (modified){
         return 'You have changes that have not yet been saved to Dropbox. If you leave, any unsaved changes will be lost.';

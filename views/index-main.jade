@@ -11,16 +11,28 @@
       #sidebar
         ul
           li 
-            a(href="#",data-name="all") All
+            a(href="#",data-name="all") 
+              i.fa.fa-star-o.list-icon
+              | All              
+          li 
+            a(href="#",data-name="today") 
+              i.fa.fa-calendar.list-icon
+              | Today              
           li
-            a(href="#here",data-name="here") Here
+            a(href="#here",data-name="here") 
+              .list-icon.list-icon-plus +
+              | Here
+              i.fa.fa-times.delete-list-btn
+          li
+            a(href="#here",data-name="location") 
+              .list-icon.list-icon-at @
+              | Location
     .col-sm-10.col-no-padding
       #ace-editor
 .container-fluid
   .row-fluid
     .col-sm-2.col-sm-offset-10
-      button.btn-md.btn-info#save-btn(onclick="saveFile()")
-        i.fa.fa-floppy-o.fa-2x
+      button.btn.btn-primary#save-btn(onclick="saveFile()")
         | Save
 
 script.
@@ -80,5 +92,16 @@ script.
     });
   }
 
-
-  
+#deleteFilter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+        h4#deleteLabel.modal-title Delete Filter
+      .modal-body
+        | Are you sure you want to delete the filter
+        code#deleteFilter
+        | ?
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+        button.btn.btn-primary#delete-filter-btn(type='button') Yes, Delete it.

@@ -112,6 +112,7 @@ button i {
 #sidebar {
   border: 1px solid #AAA;
   border-bottom: none;
+  margin-bottom: 5px;
 }
 
 #sidebar ul
@@ -146,4 +147,46 @@ button i {
   cursor: pointer;
   cursor: hand;
   color: #AAA;
+}
+
+.list-icon {
+  display: inline-block;
+  min-width: 28px;
+  text-align: center;
+  font-size: 20px;
+  height: 15px;  
+}
+
+.list-icon-plus {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 15px;
+  vertical-align: bottom;
+  margin-bottom: 3px;
+}
+
+.list-icon-at {
+  font-size: 18px;
+  line-height: 15px;
+  vertical-align: middle;
+  margin-bottom: 2px;
+}
+
+#sidebar li:hover .delete-list-btn {
+  visibility: visible;
+}
+
+.delete-list-btn {
+  float: right;
+  padding-top: 2px;
+  cursor: pointer;
+  cursor: hand;
+  color: #DAB;
+  font-size: 16px;
+  display: none;
+  visibility: hidden;
+}
+
+.delete-list-btn:hover {
+  color: #F68;
 }
