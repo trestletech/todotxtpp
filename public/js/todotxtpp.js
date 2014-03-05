@@ -94,8 +94,6 @@
         return;
       }
 
-      
-
       var hash_str = event.fragment,
         searchStr = event.getState('search');
       // Deselect any "active" sidebar item.
@@ -176,6 +174,8 @@
       revision = data.revision;
       callback(null, data);
 
+      modified = false;
+      $(window).trigger( 'hashchange' );
       modified = false;
 
       fireUpdate({text: file, revision: revision}, false);

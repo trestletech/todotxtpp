@@ -12,21 +12,38 @@ function mergeEdits(file, lineNums, edited){
   var editedLines = edited.split(/\r?\n/);
   var lines = file.split(/\r?\n/);
 
-  if (editedLines.length !== lineNums.length){
-    throw new Error("Invalid merge requsted with " + lineNums.length + 
-      " lines specified, but " + editedLines.length + " lines provided.");
-  }
-
   // Node and browser-compliant loop needed, so...
-  for (var i = 0; i < lineNums.length; i++){
+  for (var i = 0; i < Math.max(editedLines.length, lineNums.length); i++){
     // 1-Indexed
-    var lineNum = lineNums[i]-1;
+    var lineNum;
+    if (i < lineNums.length){
+      lineNum = lineNums[i]-1;
+    } else{
+      // Add to the end of the file.
+      lineNum = lines.length;
+    }
 
     if (lineNum > lines.length){
       throw new Error("Invalid line number " + lineNum + " on a " + lines.length + 
         " line file.");
     }
-    lines[lineNum] = editedLines[i];
+
+    if (i < editedLines.length){
+      lines[lineNum] = editedLines[i];  
+    } else{
+      // We must've deleted a line.
+      lines[lineNum] = null;
+    }
+  }
+
+  for (var i = 0; i < lines.length; i++){
+    if (lines[i] === null){
+      // remove line and pull pointer back one if there are more elements
+      lines.splice(i, 1);
+      if ((i + 1) < lines.length){
+        i--;
+      }
+    }
   }
 
   return lines.join('\n');
