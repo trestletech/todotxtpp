@@ -33,6 +33,7 @@
 
     $('#create-filter-ok').click(function(){
       var filterStr = $('#create-filter-input').val();
+      $('#createModal').modal('hide');
       $.ajax('/filters', {
         type: 'POST', 
         data : {
@@ -41,7 +42,7 @@
         }
       })
       .done(function(data){
-        //TODO: Append li to sidebar.
+        $('#sidebar ul').append(formatSidebarLi(filterStr));
       })
       .fail(function(xhr, status, err){
         $(document).trigger("add-alerts", [
@@ -50,6 +51,9 @@
             'priority': 'error'
           }
         ]);
+      })
+      .always(function(){
+        $('#create-filter-input').val('');
       });
     });
 
@@ -63,27 +67,69 @@
       $(this).addClass('active-filter-option');
     })
 
-    $('#create-filter-input').on('focus keypress', function(event){
-      var prefix = $(this).data('prefix');
-      if ($(this).val().indexOf(prefix) !== 0){
-        $(this).val($(this).data('prefix') + $(this).val());
+    $('#create-filter-input').on('keyup', function(event){
+      var val = $(this).val();
+      $('.create-filter-option').each(function(i, el){
+        $(this).removeClass('active-filter-option');
+
+        if (val.indexOf($(this).data('prefix')) == 0){
+          // Select this option.
+          $(this).addClass('active-filter-option');    
+        }
+      });
+
+    });
+
+    $('#create-filter-input').on('focus', function(event){
+      // Placeholder should be empty while the user is typing.
+      $(this).data('placeholder', $(this).attr('placeholder'));
+      $(this).attr('placeholder', '');
+
+      if ($(this).val() === ''){
+        $(this).val($(this).data('prefix'));
       }
     });
 
     $('#create-filter-input').on('blur', function(){
+      // Restore the placeholder text
+      $(this).attr('placeholder', $(this).data('placeholder'));
+
       var prefix = $(this).data('prefix');
       if ($(this).val() === prefix){
         $(this).val('');
       }
     });
 
-    $('.delete-list-btn').click(function(event){
+    $('#sidebar').on('click', '.delete-list-btn',function(event){
       var menuItem = $(this).closest('li a');
       
-      $('#delete-list-name').text(menuItem.data('name'));
+      var filterStr = menuItem.data('name');
+      $('#delete-list-name').text(filterStr);
       
       $('#delete-filter-btn').one('click', function(){
-        // TODO delete list.
+        $.ajax('/filters', {
+          type: 'POST', 
+          data : {
+            action: 'delete',
+            filter: filterStr
+          }
+        })
+        .done(function(data){
+          $('li', '#sidebar').each(function(i, el){
+            var name = $('a', $(el)).data('name');
+            if (name === filterStr){
+              $(this).remove();
+            }
+          });
+        })
+        .fail(function(xhr, status, err){
+          $(document).trigger("add-alerts", [
+            {
+              'message': "Unable to delete list.",
+              'priority': 'error'
+            }
+          ]);
+        });
         $('#deleteFilter').modal('hide');
       });
 
@@ -446,6 +492,26 @@
     $.each(updateCallbacks, function(i, cb){
       cb(update, external);
     });
+  }
+
+  /**
+   * Gets the appropriate HTML for the icon and label for a sidebar widget
+   * based on the string title.
+   **/
+  function formatSidebarLi(str){
+    var toReturn = '<li><a href = "#'+str+'" data-name="'+str+'">';
+    if (str.match(/^\+/)){
+      toReturn += '<div class="list-icon list-icon-plus">+</div>';
+      str = str.substring(1);
+    } else if (str.match(/^@/)){
+      toReturn += '<div class="list-icon list-icon-at">@</div>';
+      str = str.substring(1);
+    } else if (str.match(/^\(\w(\-\w)?\)/)){
+      toReturn += '<i class="fa fa-star-o list-icon"></i>';
+    }
+    toReturn += '<i class = "fa fa-times delete-list-btn"></i>';
+    toReturn += str+'</a></li>';
+    return toReturn;
   }
 
 })();

@@ -10,23 +10,26 @@
     .col-sm-2.col-no-padding
       #sidebar
         ul
-          li 
-            a(href="#",data-name="all") 
-              i.fa.fa-star-o.list-icon
-              | All              
-          li 
-            a(href="#",data-name="today") 
-              i.fa.fa-calendar.list-icon
-              | Today              
-          li
-            a(href="#here",data-name="here") 
-              .list-icon.list-icon-plus +
-              | Here
-              i.fa.fa-times.delete-list-btn
-          li
-            a(href="#here",data-name="location") 
-              .list-icon.list-icon-at @
-              | Location
+          each fil in filters
+            li
+              a(href="##{fil === '#All' ? '' : fil}",data-name="#{fil}")
+                if (fil.substring(0,1) === '+')
+                  .list-icon.list-icon-plus +
+                  =fil.substring(1)
+                if (fil.substring(0,1) === '@')
+                  .list-icon.list-icon-at @
+                  =fil.substring(1)
+                if (fil.substring(0,1) === '(')
+                  i.fa.fa-star-o.list-icon
+                  =fil
+                if (fil === '#All')
+                  i.fa.fa-home.list-icon
+                  | All
+                  
+                
+                if (fil !== '#All')
+                  i.fa.fa-times.delete-list-btn
+          
       button.btn.center-block#create-filter(data-toggle="modal" data-target="#createModal") Create Filter
     .col-sm-10.col-no-padding
       #ace-editor
@@ -56,9 +59,6 @@ script.
         return;
       }
     }, true);
-    
-
-    $('#createModal').modal('show');    ///////////////////////////////////////////
   });
     
   saveFile = function(){
@@ -123,7 +123,7 @@ script.
               i now
               | .
               
-            .col-sm-4.well.create-filter-option(data-prefix="(",data-example="(A-C)")
+            .col-sm-4.well.create-filter-option(data-prefix="(",data-example="(A)")
               h3.create-type-icon (A)
               h3 Priority
               | Keep an eye on your most important tasks. Filter based on the priority you assigned to a task.
@@ -140,9 +140,9 @@ script.
         button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
         h4#deleteLabel.modal-title Delete Filter
       .modal-body
-        | Are you sure you want to delete the filter
-        code#deleteFilter
-        | ?
+        | Are you sure you want to delete the filter "
+        code#delete-list-name
+        | "?
       .modal-footer
         button.btn.btn-default(type='button', data-dismiss='modal') Cancel
         button.btn.btn-primary#delete-filter-btn(type='button') Yes, Delete it

@@ -33,6 +33,11 @@ button i {
   text-align: center;
 }
 
+.feature-accent {
+  color: #75caeb;
+  font-style: italic;
+}
+
 #save-btn{
   font-size: 18px;
   width: 100px;
@@ -42,6 +47,10 @@ button i {
 .feature, .feature-text, #btn-save {
   display: block;
   overflow: hidden;
+}
+
+.feature {
+  margin-bottom: 2em;
 }
 
 .feature-text h3 {
@@ -234,4 +243,8 @@ button i {
   margin-bottom: 18px;
   line-height: 36px;
   font-size: 26px;
+}
+
+#footer .divider{
+  margin: 0 .5em 0 .5em;
 }
