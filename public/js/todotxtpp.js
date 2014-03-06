@@ -33,6 +33,9 @@
 
     $('#create-filter-ok').click(function(){
       var filterStr = $('#create-filter-input').val();
+      if (filterStr.trim() === ''){
+        return;
+      }
       $('#createModal').modal('hide');
       $.ajax('/filters', {
         type: 'POST', 
