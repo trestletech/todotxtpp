@@ -11,13 +11,13 @@ A NodeJS web application that supports interfacing with the [Todo.txt](http://to
  - Text editor with Todo.txt syntax highlighting
  - Select any text file in your Dropbox account to use
  - Mobile-friendly layout based on Twitter Bootstrap.
+ - Searching/filtering
 
 ### In the Works
 
  - A GUI for managing tasks
  - A syntax and automated management for recurring tasks (we'll add tasks for you where appropriate)
- - Searching/filtering
- - [You tell us...](https://github.com/trestletech/Todo.txt/issues)
+  - [You tell us...](https://github.com/trestletech/Todo.txt/issues)
 
 ## Running the Code
 
