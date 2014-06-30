@@ -5,7 +5,7 @@
       h2 Open Your Todo.txt File
       p.lead Great! We're all hoked up to your Dropbox account, but we don't know which Dropbox file you want to use as your Todo.txt file. Click the big "Choose File" button then click the text file you want us to use.
       p You can always change this later by clicking your name in the top right and clicking "Choose File". Currently you're only allowed to use files ending in <code>.txt</code>, <code>.ttxt</code> or <code>.text</code>.
-      p If, for some reason, our file chooser isn't working for you, you can manually set your path by visiting a page like <code>#{TODO_DOMAIN}/settings/path?path=/someDir/myTodos.txt</code>. If you do have to resort to this, please <a href="https://github.com/trestletech/Todo.txt/issues">let us know about it</a> so we can make the code more robust.
+      p If, for some reason, our file chooser isn't working for you, you can manually set your path by visiting a page like <code>#{TODO_DOMAIN}/settings/path?path=/someDir/myTodos.txt</code>. If you do have to resort to this, please <a href="https://github.com/trestletech/todotxtpp/issues">let us know about it</a> so we can make the code more robust.
     .col-sm-3.col-sm-offset-1
       a(href="#" onclick="Dropbox.choose({success: Todotxt.onDBSuccess, linkType:'direct', extensions:Todotxt.dbExtensions});")
         button.btn-lg.btn-info#choose-file
