@@ -41,6 +41,8 @@
 
 script.
   var editor;
+  var dict = ['+ProjectA', '@Something'];
+
   $(document).ready(function(){
     var editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
@@ -58,6 +60,43 @@ script.
         ]);
         return;
       }
+
+      var langTools = ace.require("ace/ext/language_tools");
+      editor.setOptions({enableBasicAutocompletion: true});
+      
+      // Clear out the default completers
+      while (editor.completers.length > 0){
+        // Can't just assign to a new array -- references get messed up. Just empty.
+        editor.completers.pop();
+      }
+      
+      var dictCompleter = {
+          getCompletions: function(editor, session, pos, prefix, callback) {
+              if (prefix.length === 0) { callback(null, []); return }
+              
+              // From http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+              function escapeRegExp(str) {
+                return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+              }
+
+              var matches = [];
+              $.each(dict, function(ind, val){
+                console.log(escapeRegExp(val));
+                if (val.match(new RegExp('^' + escapeRegExp(prefix), "i"))){
+                  matches.push({name: val, value: val});
+                  console.log("Matches");
+                }
+                
+              });
+
+              console.log(prefix);
+
+              callback(null, matches);
+          }
+      }
+
+      langTools.addCompleter(dictCompleter);
+
     }, true);
   });
     

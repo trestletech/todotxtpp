@@ -1,7 +1,7 @@
 {
   "name": "todotxtpp",
   "preferGlobal": "false",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Jeff Allen <jeff@trestletech.com>",
   "description": "Todo.txt Web Client with Dropbox Integration.",
   "bin": "./lib/main.js",
