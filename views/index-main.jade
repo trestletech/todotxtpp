@@ -9,9 +9,9 @@
   .row-fluid
     .col-sm-2.col-no-padding
       #sidebar
-        ul
+        ul#filters
           each fil in filters
-            li
+            li(id = fil)
               a(href="##{fil === '#All' ? '' : fil}",data-name="#{fil}")
                 if (fil.substring(0,1) === '+')
                   .list-icon.list-icon-plus +
@@ -95,8 +95,6 @@ script.
       ]);
     });
   }
-
-
 
 #createModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='createModalLabel', aria-hidden='true')
   .modal-dialog

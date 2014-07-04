@@ -31,6 +31,28 @@
     // Schedule a periodic check to check Dropbox.
     registerCheck();
 
+    $('#filters').sortable({
+      update: function(event, ui) {
+        var arr = $('#filters').sortable("toArray");
+        $.ajax('/filters', {
+          type: 'POST', 
+          data : {
+            action: 'order',
+            filter: arr
+          }
+        })
+        .fail(function(xhr, status, err){
+          $(document).trigger("add-alerts", [
+            {
+              'message': "Unable to save new filter order. Please try again later.",
+              'priority': 'warning'
+            }
+          ]);
+        })
+      }
+    });
+    $( "#filters" ).disableSelection();  
+
     $('#create-filter-ok').click(function(){
       var filterStr = $('#create-filter-input').val();
       $('#createModal').modal('hide');
