@@ -172,7 +172,7 @@
       $.bbq.pushState();
     });
 
-
+    // Update the editor/alerts
     addUpdateHook(function(data, external){
       if (!external){
         // We can ignore updates from the current page, since the editor would
@@ -332,6 +332,9 @@
     });
   }
 
+  // An array of auto-complete suggestions -- currently projects and contexts.
+  exports.dictionary = [];
+
   var getList = exports.getList = function(callback, forceRefresh){
     if (arguments.length < 2){
       forceRefresh = false;
@@ -346,8 +349,14 @@
       file = data.text;
       revision = data.revision;
       
+      exports.dictionary = [];
+      var keywords = file.match(new RegExp("(^\|[\\s])([\\+\\@]\\w+)", 'g'));
+      $.each(keywords, function(ind, key){
+        exports.dictionary.push(key.trim());
+      });
+
       // We got a new file. We may need to re-render.
-      $(window).trigger( 'hashchange' );
+      $(window).trigger('hashchange');
 
       callback(null, data);
     })

@@ -41,8 +41,7 @@
 
 script.
   var editor;
-  var dict = ['+ProjectA', '@Something'];
-
+  
   $(document).ready(function(){
     var editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
@@ -62,6 +61,7 @@ script.
       }
 
       var langTools = ace.require("ace/ext/language_tools");
+      var Autocomplete = ace.require("ace/autocomplete").Autocomplete;
       editor.setOptions({enableBasicAutocompletion: true});
       
       // Clear out the default completers
@@ -80,22 +80,32 @@ script.
               }
 
               var matches = [];
-              $.each(dict, function(ind, val){
-                console.log(escapeRegExp(val));
+              $.each(Todotxt.dictionary, function(ind, val){
                 if (val.match(new RegExp('^' + escapeRegExp(prefix), "i"))){
                   matches.push({name: val, value: val});
-                  console.log("Matches");
-                }
-                
+                }                
               });
-
-              console.log(prefix);
 
               callback(null, matches);
           }
       }
 
       langTools.addCompleter(dictCompleter);
+
+      // Enable tab for auto-completion
+      editor.commands.addCommand({
+        name: "startAutocomplete",
+        exec: function(editor) {
+            if (!editor.completer)
+              editor.completer = new Autocomplete();
+            editor.completer.autoInsert = 
+            editor.completer.autoSelect = true;
+            editor.completer.showPopup(editor);
+            // needed for firefox on mac
+            editor.completer.cancelContextMenu();
+        },
+        bindKey: "tab"
+      });
 
     }, true);
   });
