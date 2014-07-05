@@ -1,0 +1,16 @@
+Todo.txt++ 0.3.0
+--------------------------------------------------------------------------------
+
+* Added ability to reorder filters
+* Added auto-completion of project names and contexts, access by starting a 
+  project/context name and hitting "tab" or "Ctrl+Space".
+
+Todo.txt++ 0.2.0
+--------------------------------------------------------------------------------
+
+* Added filtering
+
+Todo.txt++ 0.1.0
+--------------------------------------------------------------------------------
+
+* Initial release with MongoDB and Dropbox integration

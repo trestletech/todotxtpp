@@ -9,9 +9,9 @@
   .row-fluid
     .col-sm-2.col-no-padding
       #sidebar
-        ul
+        ul#filters
           each fil in filters
-            li
+            li(id = fil)
               a(href="##{fil === '#All' ? '' : fil}",data-name="#{fil}")
                 if (fil.substring(0,1) === '+')
                   .list-icon.list-icon-plus +
@@ -41,6 +41,7 @@
 
 script.
   var editor;
+  
   $(document).ready(function(){
     var editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
@@ -58,6 +59,54 @@ script.
         ]);
         return;
       }
+
+      var langTools = ace.require("ace/ext/language_tools");
+      var Autocomplete = ace.require("ace/autocomplete").Autocomplete;
+      editor.setOptions({enableBasicAutocompletion: true});
+      
+      // Clear out the default completers
+      while (editor.completers.length > 0){
+        // Can't just assign to a new array -- references get messed up. Just empty.
+        editor.completers.pop();
+      }
+      
+      var dictCompleter = {
+          getCompletions: function(editor, session, pos, prefix, callback) {
+              if (prefix.length === 0) { callback(null, []); return }
+              
+              // From http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+              function escapeRegExp(str) {
+                return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+              }
+
+              var matches = [];
+              $.each(Todotxt.dictionary, function(ind, val){
+                if (val.match(new RegExp('^' + escapeRegExp(prefix), "i"))){
+                  matches.push({name: val, value: val});
+                }                
+              });
+
+              callback(null, matches);
+          }
+      }
+
+      langTools.addCompleter(dictCompleter);
+
+      // Enable tab for auto-completion
+      editor.commands.addCommand({
+        name: "startAutocomplete",
+        exec: function(editor) {
+            if (!editor.completer)
+              editor.completer = new Autocomplete();
+            editor.completer.autoInsert = 
+            editor.completer.autoSelect = true;
+            editor.completer.showPopup(editor);
+            // needed for firefox on mac
+            editor.completer.cancelContextMenu();
+        },
+        bindKey: "tab"
+      });
+
     }, true);
   });
     
@@ -95,8 +144,6 @@ script.
       ]);
     });
   }
-
-
 
 #createModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='createModalLabel', aria-hidden='true')
   .modal-dialog
