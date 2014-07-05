@@ -249,3 +249,30 @@ button i {
   border-right: 1px solid #CCC;
   border-left: 1px solid #CCC;
 }
+
+@media (max-width: 767px) { 
+  #twitter-logo {
+    margin-top: 7px;
+  }
+}
+
+@media (min-width: 768px) { 
+  #twitter-logo {
+    margin-top: 15px;
+  }
+}
+
+
+#twitter-logo {
+  height: 21px !important;
+  width: 26px;
+  background: url('../images/twitter-sm.png') no-repeat center top;
+  margin-left: 10px;
+  overflow: hidden;
+  padding: 0;
+
+}
+
+#twitter-logo:hover {
+  background-position: 0 -21px;
+}
