@@ -175,6 +175,7 @@
       $.bbq.pushState();
     });
 
+
     // Update the editor/alerts
     addUpdateHook(function(data, external){
       if (!external){
@@ -306,7 +307,7 @@
   var save = exports.save = function(callback){    
     var appliedFilter = currentFilter;    
     var appliedText = editor.getSession().getValue();
-    
+
     $.ajax('/list', {
       type: 'POST', 
       data : {
@@ -316,19 +317,32 @@
       }
     })
     .done(function(data){
-      if (appliedFilter){
-        // Need to merge the changes in to our local copy
-        file = mergeEdits(file, appliedFilter, appliedText);
-      } else {
-        file = appliedText;
+      
+      skipUpdates = false;
+
+      if (appliedText !== editor.getValue()) {
+        console.log("Skipping editor update due to local edits.")
+        skipUpdates = true;
       }
+
+      if (!skipUpdates){
+        if (appliedFilter){
+          // Need to merge the changes in to our local copy
+          file = mergeEdits(file, appliedFilter, appliedText);
+        } else {
+          file = appliedText;
+        }
+      }
+      
       revision = data.revision;
       callback(null, data);
 
-      modified = false;
-      $(window).trigger( 'hashchange' );
+      if (!skipUpdates){
+        modified = false;
+        $(window).trigger( 'hashchange' );
 
-      fireUpdate({text: file, revision: revision}, false);
+        fireUpdate({text: file, revision: revision}, false);
+      }
     })
     .fail(function(xhr, status, err){
       callback(err, null);
@@ -398,12 +412,19 @@
   exports.setEditor = function(edtr){
     editor = edtr;
     editor.getSession().on('change', function(e) {
-      modified = true;      
+      modified = true;
     });
     return editor;
   }
 
   var setText = exports.setText = function(text, force){
+    if (text == editor.getValue()){
+      // No need to trigger update events if nothing's been set.
+      modified = false;
+      return;
+    }
+
+
     if (modified && !force){
       throw new Error("Can't update the file since it's been modified");
     }
@@ -480,7 +501,7 @@
     currentFilter = lineNums;
 
     if (!lineNums){
-      editor.setValue(file, -1);
+      setText(file);
       return;
     }
 
@@ -493,12 +514,26 @@
     setText(str);
   }
 
+
+  // Allow the external caller to temporarily disable the periodic check.
+  // Can be used if, for instance, the user is typing and we have a save
+  // scheduled.
+  checkEnabled = true;
+  setCheck = exports.setCheck = function(enabled){
+    checkEnabled = enabled;
+  }
+
   /**
    * Register a periodic check to keep our file up-to-date with the one on
    * Dropbox.
    **/
   function registerCheck(){
     window.setInterval(function(){
+      // Check is (momentarily) disabled, so don't query this round.
+      if (!checkEnabled){
+        return;
+      }
+
       if (!revision){
         // There's nothing we can do yet.
         return;

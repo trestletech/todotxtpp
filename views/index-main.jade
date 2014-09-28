@@ -36,7 +36,7 @@
 .container-fluid
   .row-fluid
     .col-sm-2.col-sm-offset-10
-      button.btn.btn-primary#save-btn(onclick="saveFile()")
+      button.btn.btn-primary#save-btn(onclick="saveFile(true)")
         | Save
 
 script.
@@ -107,13 +107,56 @@ script.
         bindKey: "tab"
       });
 
+      SAVE_FREQUENCY = 3000; // max frequency of automatic saves
+      saveTimer = null;
+      lastSave = Date.now();    
+
+      // Listen for keyboard interactions with the editor so we can
+      // auto-save.
+      $('#ace-editor').keyup(function(e) {
+        if (saveTimer != null) {
+          // We already have a save scheduled
+          return;
+        }
+        
+        tDiff = Date.now() - lastSave;
+        // The function to eval when we want to save.
+        saveFun = function(){
+          lastSave = Date.now();
+          saveFile(false, function(){
+            // Restore the periodic check for external updates.
+            Todotxt.setCheck(true);
+          });
+
+          // Reset the timer.
+          saveTimer = null;
+        }
+
+        if (tDiff >= SAVE_FREQUENCY) {
+          // Then we can just save now
+          setTimeout(saveFun, 0);
+        } else {
+          // Temporarily disable the periodic checks for external updates
+          // since our own saves will look like external updates by the time
+          // the AJAX makes the round-trip and the editor has changed.
+          Todotxt.setCheck(false);
+
+          // We need to schedule a save
+          saveTimer = setTimeout(saveFun, SAVE_FREQUENCY - tDiff);
+        }
+      }); 
+
     }, true);
   });
     
-  saveFile = function(){
+  saveFile = function(notify, cb){
     $('#save-btn').prop('disabled', true);
     Todotxt.save(function(err, data){
       
+      if (cb){
+        cb();
+      }
+
       $('#save-btn').prop('disabled', false);
 
       if (err){
@@ -136,12 +179,12 @@ script.
         return;
       }
 
-      $(document).trigger("add-alerts", [
-        {
+      if (notify) {
+        $(document).trigger("add-alerts", [{
           'message': "Saved successfully.",
           'priority': 'info'
-        }
-      ]);
+        }]);
+      }
     });
   }
 
