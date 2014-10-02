@@ -82,6 +82,10 @@
       });
     });
 
+    $('#filter-select').change(function(evt){
+      $.bbq.pushState('#' + $('#filter-select').val());
+    });
+
     $('.create-filter-option').click(function(event){
       $('#create-filter-input').attr('placeholder', $(this).data('example'));
       $('#create-filter-input').data('prefix', $(this).data('prefix'));
@@ -308,16 +312,28 @@
     var appliedFilter = currentFilter;    
     var appliedText = editor.getSession().getValue();
 
+    var cf;
+    if (typeof currentFilter === 'undefined'){
+      cf = false;
+    } else {
+      cf = currentFilter
+    }
+
     $.ajax('/list', {
       type: 'POST', 
       data : {
         text: editor.getSession().getValue(),
         revision: revision,
-        filter: currentFilter
+        filter: cf
       }
     })
-    .done(function(data){
-      
+    .done(function(data){      
+      if (typeof data === 'undefined'){
+        // Can return an HTTP 204 if we did a no-op on the server.
+        callback(null, null);
+        return;
+      }
+
       skipUpdates = false;
 
       if (appliedText !== editor.getValue()) {
@@ -368,9 +384,11 @@
       
       exports.dictionary = [];
       var keywords = file.match(new RegExp("(^\|[\\s])([\\+\\@]\\w+)", 'g'));
-      $.each(keywords, function(ind, key){
-        exports.dictionary.push(key.trim());
-      });
+      if (keywords){
+        $.each(keywords, function(ind, key){
+          exports.dictionary.push(key.trim());
+        });  
+      }      
 
       // We got a new file. We may need to re-render.
       $(window).trigger('hashchange');
