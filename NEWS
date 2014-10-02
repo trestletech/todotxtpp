@@ -1,3 +1,11 @@
+Todo.txt++ 0.4.0
+--------------------------------------------------------------------------------
+
+* Auto-save as the user interacts with the editor.
+* Use the Ladda library to put save notifications directly on the button so the 
+  screen doesn't bounce around every time you save.
+* BUG-FIX: Don't crash the server on remote file conflicts (oops).
+
 Todo.txt++ 0.3.0
 --------------------------------------------------------------------------------
 
