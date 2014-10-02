@@ -36,13 +36,17 @@
 .container-fluid
   .row-fluid
     .col-sm-2.col-sm-offset-10
-      button.btn.btn-primary#save-btn(onclick="saveFile(true)")
-        | Save
+      button.ladda-button#save-btn(data-style="expand-left" onclick="saveFile();" data-color="blue")
+        span.ladda-label   
+          | Save
 
 script.
   var editor;
+  var savebtn;
   
   $(document).ready(function(){
+    savebtn = $('#save-btn').ladda();
+
     var editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
     editor.getSession().setMode("ace/mode/todotxt");
@@ -123,7 +127,7 @@ script.
         // The function to eval when we want to save.
         saveFun = function(){
           lastSave = Date.now();
-          saveFile(false, function(){
+          saveFile(function(){
             // Restore the periodic check for external updates.
             Todotxt.setCheck(true);
           });
@@ -149,15 +153,15 @@ script.
     }, true);
   });
     
-  saveFile = function(notify, cb){
-    $('#save-btn').prop('disabled', true);
-    Todotxt.save(function(err, data){
-      
+  saveFile = function(cb){
+    savebtn.ladda('start');
+    
+    Todotxt.save(function(err, data){      
       if (cb){
         cb();
       }
-
-      $('#save-btn').prop('disabled', false);
+      
+      savebtn.ladda('stop');
 
       if (err){
         $(document).trigger("add-alerts", [
@@ -177,13 +181,6 @@ script.
           }
         ]);
         return;
-      }
-
-      if (notify) {
-        $(document).trigger("add-alerts", [{
-          'message': "Saved successfully.",
-          'priority': 'info'
-        }]);
       }
     });
   }
