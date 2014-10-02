@@ -9,7 +9,7 @@
   .row-fluid
     .col-sm-2.col-no-padding
       #sidebar
-        ul#filters
+        ul#filters.hidden-xs
           each fil in filters
             li(id = fil)
               a(href="##{fil === '#All' ? '' : fil}",data-name="#{fil}")
@@ -29,11 +29,19 @@
                 
                 if (fil !== '#All')
                   i.fa.fa-times.delete-list-btn
+
+        select#filter-select.visible-xs         
+          option(value="" selected="1")
+            | Select a filter...
+          each fil in filters
+            option(value = fil)
+              | #{fil}
           
-      button.btn.center-block#create-filter(data-toggle="modal" data-target="#createModal") Create Filter
+      button.btn.center-block.hidden-xs#create-filter(data-toggle="modal" data-target="#createModal") Create Filter
+
     .col-sm-10.col-no-padding
       #ace-editor
-.container-fluid
+.container-fluid#save-row
   .row-fluid
     .col-sm-2.col-sm-offset-10
       button.ladda-button#save-btn(data-style="expand-left" onclick="saveFile();" data-color="blue")
@@ -43,7 +51,7 @@
 script.
   var editor;
   var savebtn;
-  
+
   $(document).ready(function(){
     savebtn = $('#save-btn').ladda();
 
@@ -184,6 +192,21 @@ script.
       }
     });
   }
+
+  function resizeAce() {    
+    // The summed height of everything else on the screen for either wide or narrow views
+    sHeight = $('.navbar').outerHeight(true) +$('#footer').outerHeight(true) + $('#save-row').outerHeight(true);
+    sHeight += 20; // gap on absolutely positioned footer
+
+    if ($('.device-xs').is(':visible')){
+      sHeight += $('#filter-select').outerHeight(true);
+    }
+
+    return $("#ace-editor").height($(window).height()-sHeight); 
+  };
+  $(window).resize(resizeAce);
+  setTimeout(resizeAce,0); // Let Bootstrap do its thing first.
+
 
 #createModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='createModalLabel', aria-hidden='true')
   .modal-dialog
