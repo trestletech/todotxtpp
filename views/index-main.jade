@@ -55,7 +55,7 @@ script.
   $(document).ready(function(){
     savebtn = $('#save-btn').ladda();
 
-    var editor = Todotxt.setEditor(ace.edit("ace-editor"));
+    editor = Todotxt.setEditor(ace.edit("ace-editor"));
 
     editor.getSession().setMode("ace/mode/todotxt");
     editor.setShowPrintMargin(false);
@@ -202,7 +202,8 @@ script.
       sHeight += $('#filter-select').outerHeight(true);
     }
 
-    return $("#ace-editor").height($(window).height()-sHeight); 
+    $("#ace-editor").height($(window).height()-sHeight); 
+    editor.resize();
   };
   $(window).resize(resizeAce);
   setTimeout(resizeAce,0); // Let Bootstrap do its thing first.

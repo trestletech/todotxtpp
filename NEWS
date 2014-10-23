@@ -1,3 +1,11 @@
+Todo.txt++ 0.5.0
+--------------------------------------------------------------------------------
+
+* Expand the editor to fill all available screen space.
+* Extend session expiration as the user interacts with the app, and session
+  lifetime to 7 days.
+
+
 Todo.txt++ 0.4.0
 --------------------------------------------------------------------------------
 
