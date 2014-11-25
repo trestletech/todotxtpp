@@ -119,9 +119,30 @@ script.
         bindKey: "tab"
       });
 
-      SAVE_FREQUENCY = 3000; // max frequency of automatic saves
+      SAVE_FREQUENCY = 5000; // max interval for automatic saves
       saveTimer = null;
       lastSave = Date.now();    
+
+      // The function to eval when we want to save.
+      saveFun = function(){
+        lastSave = Date.now();
+        saveFile(function(){
+          // Restore the periodic check for external updates.
+          Todotxt.setCheck(true);
+        });
+
+        // Reset the timer.
+        clearInterval(saveTimer);
+        saveTimer = null;
+      };
+
+      // This will be logged as a keystroke that fires a save function, but
+      // one extra save probably isn't the end of the world.
+      editor.commands.addCommand({
+        name:"save",
+        bindKey: {win: "Ctrl-S", mac: "Command-S"},
+        exec: saveFun
+      });
 
       // Listen for keyboard interactions with the editor so we can
       // auto-save.
@@ -132,18 +153,7 @@ script.
         }
         
         tDiff = Date.now() - lastSave;
-        // The function to eval when we want to save.
-        saveFun = function(){
-          lastSave = Date.now();
-          saveFile(function(){
-            // Restore the periodic check for external updates.
-            Todotxt.setCheck(true);
-          });
-
-          // Reset the timer.
-          saveTimer = null;
-        }
-
+        
         if (tDiff >= SAVE_FREQUENCY) {
           // Then we can just save now
           setTimeout(saveFun, 0);
