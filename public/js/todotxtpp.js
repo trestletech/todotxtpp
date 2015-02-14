@@ -48,7 +48,7 @@
               'priority': 'warning'
             }
           ]);
-        })
+        });
       }
     });
     $( "#filters" ).disableSelection();  
@@ -94,14 +94,14 @@
         $(this).removeClass('active-filter-option');
       });
       $(this).addClass('active-filter-option');
-    })
+    });
 
     $('#create-filter-input').on('keyup', function(event){
       var val = $(this).val();
       $('.create-filter-option').each(function(i, el){
         $(this).removeClass('active-filter-option');
 
-        if (val.indexOf($(this).data('prefix')) == 0){
+        if (val.indexOf($(this).data('prefix')) === 0){
           // Select this option.
           $(this).addClass('active-filter-option');    
         }
@@ -172,7 +172,7 @@
         return 'You have changes that have not yet been saved to Dropbox. If you leave, any unsaved changes will be lost.';
       }
       return;
-    }
+    };
 
     // Add a clear button on the search input that takes us back home
     $('#clear-search').click(function(){
@@ -259,7 +259,7 @@
         $('#clear-search').show();
 
         filterTo(results);
-        return
+        return;
       } 
 
       $('#clear-search').hide();
@@ -295,18 +295,18 @@
 
   var getRevision = exports.getRevision = function(){
     return revision;
-  }
+  };
 
   /**
    * Add a function callback when the Todolist file is updated.
    **/
   var addUpdateHook = exports.addUpdateHook = function(callback){
     updateCallbacks.push(callback);
-  }
+  };
 
   var removeUpdateHook = exports.removeUpdateHook = function(callback){
     updateCallbacks.splice(updateCallbacks.indexOf(callback),1);
-  }
+  };
 
   var save = exports.save = function(callback){    
     var appliedFilter = currentFilter;    
@@ -316,7 +316,7 @@
     if (typeof currentFilter === 'undefined'){
       cf = false;
     } else {
-      cf = currentFilter
+      cf = currentFilter;
     }
 
     $.ajax('/list', {
@@ -337,7 +337,7 @@
       skipUpdates = false;
 
       if (appliedText !== editor.getValue()) {
-        console.log("Skipping editor update due to local edits.")
+        console.log("Skipping editor update due to local edits.");
         skipUpdates = true;
       }
 
@@ -363,7 +363,7 @@
     .fail(function(xhr, status, err){
       callback(err, null);
     });
-  }
+  };
 
   // An array of auto-complete suggestions -- currently projects and contexts.
   exports.dictionary = [];
@@ -398,7 +398,7 @@
     .fail(function(xhr, status, err){
       callback(err, null);
     });
-  }
+  };
 
   var onDBSuccess = exports.onDBSuccess = function(files){
     // We only get one file
@@ -433,7 +433,7 @@
       modified = true;
     });
     return editor;
-  }
+  };
 
   var setText = exports.setText = function(text, force){
     if (text == editor.getValue()){
@@ -450,7 +450,7 @@
     editor.setValue(text, -1);
 
     modified = false;
-  }
+  };
 
   /**
    * Perform a search for the given string using the local file.
@@ -500,7 +500,7 @@
     }
 
     return matches;
-  }
+  };
 
   /**
    * Execute a search for the given string and render the results.
@@ -508,7 +508,7 @@
   var renderSearch = exports.renderSearch = function(searchVal){
     var results = search(searchVal);
     $.bbq.pushState({search: searchVal});
-  }
+  };
 
   var filterTo = exports.filterTo = function(lineNums){
 
@@ -530,7 +530,7 @@
 
     var str = filtered.join('\n');
     setText(str);
-  }
+  };
 
 
   // Allow the external caller to temporarily disable the periodic check.
@@ -539,7 +539,7 @@
   checkEnabled = true;
   setCheck = exports.setCheck = function(enabled){
     checkEnabled = enabled;
-  }
+  };
 
   /**
    * Register a periodic check to keep our file up-to-date with the one on
@@ -601,4 +601,177 @@
     return toReturn;
   }
 
+  var activateEditor = exports.activateEditor = function(){
+    var editor;
+    var savebtn;
+
+    $(document).ready(function(){
+      savebtn = $('#save-btn').ladda();
+
+      editor = Todotxt.setEditor(ace.edit("ace-editor"));
+
+      editor.getSession().setMode("ace/mode/todotxt");
+      editor.setShowPrintMargin(false);
+      editor.getSession().setUseWrapMode('free');
+
+      Todotxt.getList(function(err, data){
+        if (err){
+          $(document).trigger("add-alerts", [
+            {
+              'message': "Unable to load file from Dropbox. Please try again later.",
+              'priority': 'error'
+            }
+          ]);
+          return;
+        }
+
+        var langTools = ace.require("ace/ext/language_tools");
+        var Autocomplete = ace.require("ace/autocomplete").Autocomplete;
+        editor.setOptions({enableBasicAutocompletion: true});
+
+        // Clear out the default completers
+        while (editor.completers.length > 0){
+          // Can't just assign to a new array -- references get messed up. Just empty.
+          editor.completers.pop();
+        }
+
+        var dictCompleter = {
+          getCompletions: function(editor, session, pos, prefix, callback) {
+            if (prefix.length === 0) { callback(null, []); return; }
+
+            // From http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+            function escapeRegExp(str) {
+              return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+            }
+
+            var matches = [];
+            $.each(Todotxt.dictionary, function(ind, val){
+              if (val.match(new RegExp('^' + escapeRegExp(prefix), "i"))){
+                matches.push({name: val, value: val});
+              }                
+            });
+
+            callback(null, matches);
+          }
+        };
+
+        langTools.addCompleter(dictCompleter);
+
+        // Enable tab for auto-completion
+        editor.commands.addCommand({
+          name: "startAutocomplete",
+          exec: function(editor) {
+
+            if (!editor.completer)
+              editor.completer = new Autocomplete();
+            editor.completer.autoInsert = 
+              editor.completer.autoSelect = true;
+            editor.completer.showPopup(editor);
+            // needed for firefox on mac
+            editor.completer.cancelContextMenu();
+          },
+          bindKey: "tab"
+        });
+
+        SAVE_FREQUENCY = 5000; // max interval for automatic saves
+        saveTimer = null;
+        lastSave = Date.now();    
+
+        // The function to eval when we want to save.
+        saveFun = function(){
+          lastSave = Date.now();
+          saveFile(function(){
+            // Restore the periodic check for external updates.
+            Todotxt.setCheck(true);
+          });
+
+          // Reset the timer.
+          clearInterval(saveTimer);
+          saveTimer = null;
+        };
+
+        // This will be logged as a keystroke that fires a save function, but
+        // one extra save probably isn't the end of the world.
+        editor.commands.addCommand({
+          name:"save",
+          bindKey: {win: "Ctrl-S", mac: "Command-S"},
+          exec: saveFun
+        });
+
+        // Listen for keyboard interactions with the editor so we can
+        // auto-save.
+        $('#ace-editor').keyup(function(e) {
+          if (saveTimer !== null) {
+            // We already have a save scheduled
+            return;
+          }
+
+          tDiff = Date.now() - lastSave;
+
+          if (tDiff >= SAVE_FREQUENCY) {
+            // Then we can just save now
+            setTimeout(saveFun, 0);
+          } else {
+            // Temporarily disable the periodic checks for external updates
+            // since our own saves will look like external updates by the time
+            // the AJAX makes the round-trip and the editor has changed.
+            Todotxt.setCheck(false);
+
+            // We need to schedule a save
+            saveTimer = setTimeout(saveFun, SAVE_FREQUENCY - tDiff);
+          }
+        }); 
+
+      }, true);
+    });
+
+    saveFile = function(cb){
+      savebtn.ladda('start');
+
+      Todotxt.save(function(err, data){      
+        if (cb){
+          cb();
+        }
+
+        savebtn.ladda('stop');
+
+        if (err){
+          $(document).trigger("add-alerts", [
+            {
+              'message': "Error saving file: " + status,
+              'priority': 'error'
+            }
+          ]);
+          return;
+        }
+
+        if (data && data.errors && data.errors.length > 0){
+          $(document).trigger("add-alerts", [
+            {
+              'message': data.errors[0],
+              'priority': 'error'
+            }
+          ]);
+          return;
+        }
+      });
+    };
+
+    function resizeAce() {    
+      // The summed height of everything else on the screen for either wide or narrow views
+      sHeight = $('.navbar').outerHeight(true) +$('#footer').outerHeight(true) + $('#save-row').outerHeight(true);
+      sHeight += 20; // gap on absolutely positioned footer
+
+      if ($('.device-xs').is(':visible')){
+        sHeight += $('#filter-select').outerHeight(true);
+      }
+
+      $("#ace-editor").height($(window).height()-sHeight); 
+      editor.resize();
+    }
+    $(window).resize(resizeAce);
+    setTimeout(resizeAce,0); // Let Bootstrap do its thing first.  
+  }
 })();
+
+
