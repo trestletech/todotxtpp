@@ -1,0 +1,16 @@
+{
+  "full": {
+    "key": "rdcgn7mhwk9x2f2",
+    "secret": "1y1e4lsu6dhguz5",
+    "server": "https://api-dbdev.dev.corp.dropbox.com",
+    "authServer": "https://dbdev.dev.corp.dropbox.com",
+    "downloadServer": "https://block-dbdev.dev.corp.dropbox.com"
+  },
+  "sandbox": {
+    "key": "vq72jey5qm1443g",
+    "secret": "1m9pl7f5p60eutg",
+    "server": "https://api-dbdev.dev.corp.dropbox.com",
+    "authServer": "https://dbdev.dev.corp.dropbox.com",
+    "downloadServer": "https://block-dbdev.dev.corp.dropbox.com"
+  }
+}

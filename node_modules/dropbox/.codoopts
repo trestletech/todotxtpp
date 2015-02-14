@@ -1,0 +1,14 @@
+--name         "dropbox.js"
+--readme       README.md
+--title        "API Documentation"
+--output-dir   ./doc
+./src
+-
+README.md
+LICENSE.txt
+./guides/auth_drivers.md
+./guides/builtin_drivers.md
+./guides/coffee_faq.md
+./guides/development.md
+./guides/getting_started.md
+./guides/snippets.md

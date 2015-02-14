@@ -1,0 +1,39 @@
+
+Todo.txt++ 0.5.0
+--------------------------------------------------------------------------------
+
+* Rewrite/refactor majority of code.
+
+
+Todo.txt++ 0.4.1
+--------------------------------------------------------------------------------
+
+* Expand the editor to fill all available screen space.
+* Extend session expiration as the user interacts with the app, and session
+  lifetime to 7 days.
+* Save on "Ctrl/Cmd+S". Expand auto-save to a min of 5 seconds.
+
+Todo.txt++ 0.4.0
+--------------------------------------------------------------------------------
+
+* Auto-save as the user interacts with the editor.
+* Use the Ladda library to put save notifications directly on the button so the 
+  screen doesn't bounce around every time you save.
+* BUG-FIX: Don't crash the server on remote file conflicts (oops).
+
+Todo.txt++ 0.3.0
+--------------------------------------------------------------------------------
+
+* Added ability to reorder filters
+* Added auto-completion of project names and contexts, access by starting a 
+  project/context name and hitting "tab" or "Ctrl+Space".
+
+Todo.txt++ 0.2.0
+--------------------------------------------------------------------------------
+
+* Added filtering
+
+Todo.txt++ 0.1.0
+--------------------------------------------------------------------------------
+
+* Initial release with MongoDB and Dropbox integration
