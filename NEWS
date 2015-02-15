@@ -1,10 +1,13 @@
 Todo.txt++ 0.5.0
 --------------------------------------------------------------------------------
 
+* Add button to archive completed tasks to done.txt file
+* Lots of code cleanup, testing, and bugfixing
 * Expand the editor to fill all available screen space.
 * Extend session expiration as the user interacts with the app, and session
   lifetime to 7 days.
 * Save on "Ctrl/Cmd+S". Expand auto-save to a min of 5 seconds.
+* BUGFIX: Properly save when on a 'filtered' view of the list.
 
 Todo.txt++ 0.4.0
 --------------------------------------------------------------------------------

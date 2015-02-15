@@ -36,7 +36,7 @@ function mergeEdits(file, lineNums, edited){
     }
   }
 
-  for (var i = 0; i < lines.length; i++){
+  for (i = 0; i < lines.length; i++){
     if (lines[i] === null){
       // remove line and pull pointer back one if there are more elements
       lines.splice(i, 1);

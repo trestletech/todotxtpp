@@ -31,6 +31,28 @@
     // Schedule a periodic check to check Dropbox.
     registerCheck();
 
+    $('#archive-dones').click(function(){
+      if (!confirm("This will archive all your completed tasks to a file named 'done.txt' in the same directory as your todo.txt file.\n\nAre you sure you want to continue?")){
+        return;
+      }
+
+      $.ajax('/archive', {
+        type: 'POST'
+      })
+      .then(function(data){
+        
+        renderFile(data);
+      })
+      .fail(function(xhr, status, err){
+        $(document).trigger("add-alerts", [
+            {
+              'message': "Unable to archive completed tasks. Please try again later.",
+              'priority': 'warning'
+            }
+          ]);
+      });
+    });
+
     $('#filters').sortable({
       update: function(event, ui) {
         var arr = $('#filters').sortable("toArray");
@@ -379,19 +401,7 @@
 
     $.ajax('/list')
     .done(function(data){
-      file = data.text;
-      revision = data.revision;
-      
-      exports.dictionary = [];
-      var keywords = file.match(new RegExp("(^\|[\\s])([\\+\\@]\\w+)", 'g'));
-      if (keywords){
-        $.each(keywords, function(ind, key){
-          exports.dictionary.push(key.trim());
-        });  
-      }      
-
-      // We got a new file. We may need to re-render.
-      $(window).trigger('hashchange');
+      renderFile(data);
 
       callback(null, data);
     })
@@ -399,6 +409,23 @@
       callback(err, null);
     });
   };
+
+  function renderFile(data){
+    revision = data.revision;
+
+    file = data.text;
+
+    exports.dictionary = [];
+    var keywords = file.match(new RegExp("(^\|[\\s])([\\+\\@]\\w+)", 'g'));
+    if (keywords){
+      $.each(keywords, function(ind, key){
+        exports.dictionary.push(key.trim());
+      });  
+    }      
+
+    // We got a new file. We may need to re-render.
+    $(window).trigger('hashchange');
+  }
 
   var onDBSuccess = exports.onDBSuccess = function(files){
     // We only get one file
@@ -766,7 +793,11 @@
         sHeight += $('#filter-select').outerHeight(true);
       }
 
-      $("#ace-editor").height($(window).height()-sHeight); 
+      sHeight = $(window).height() - sHeight;
+
+      $('#sidebar-col').height(sHeight);
+
+      $("#ace-editor").height(sHeight); 
       editor.resize();
     }
     $(window).resize(resizeAce);

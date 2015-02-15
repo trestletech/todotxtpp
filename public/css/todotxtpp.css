@@ -231,6 +231,16 @@ button i {
   margin-top: 2em;
 }
 
+#sidebar-col {
+  position: relative;
+  height: 100%;
+}
+
+#archive-dones {
+  position: absolute;
+  bottom: 0;
+}
+
 #createModal h3{
   margin-top: 0;
   

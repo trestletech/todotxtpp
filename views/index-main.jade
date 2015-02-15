@@ -7,7 +7,7 @@
 
 .container-fluid
   .row-fluid
-    .col-sm-2.col-no-padding
+    #sidebar-col.col-sm-2.col-no-padding
       #sidebar
         ul#filters.hidden-xs
           each fil in filters
@@ -38,6 +38,8 @@
               | #{fil}
           
       button.btn.center-block.hidden-xs#create-filter(data-toggle="modal" data-target="#createModal") Create Filter
+
+      button.btn.center-block#archive-dones Archive to done.txt
 
     .col-sm-10.col-no-padding
       #ace-editor
