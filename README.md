@@ -2,7 +2,9 @@
 Todo.txt++
 ==========
 
-A NodeJS web application that supports interfacing with the [Todo.txt](http://todotxt.com/) protocol with Dropbox integration. Hosted online at [http://todotxtpp.com](http://todotxtpp.com).
+> This project is not actively maintained. Help yourself to fork it!
+
+A NodeJS web application that supports interfacing with the [Todo.txt](http://todotxt.com/) protocol with Dropbox integration.
 
 ![Todo.txt++ Screenshot](http://trestletech.github.io/todotxtpp/images/todo-screenshot.png)
 
@@ -21,7 +23,7 @@ A NodeJS web application that supports interfacing with the [Todo.txt](http://to
 
 ## Running the Code
 
-We host a version that you can use for free at [http://todotxtpp.com](http://todotxtpp.com). But if you want to modify the software or run your own copy...
+If you want to modify the software or run your own copy...
 
 Make sure you've followed the instructions below about registering a Dropbox application. You will also need a MongoDB instance -- if it's not running locally on the default ports, you'll need to use the `TODO_MONGO` environment variable to point to it. Then clone this repository then from the base directory execute:
 
